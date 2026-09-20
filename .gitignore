@@ -1,0 +1,29 @@
+
+# Local run logs and transient checks.
+# renv project-local files that should not be committed.
+*.log
+.DS_Store
+.RData
+.Renviron
+.Rhistory
+.Ruserdata
+Rplots.pdf
+dist/
+outputs/quick_check/
+outputs/session_info/*.tmp
+renv/library/
+renv/python/
+renv/sandbox/
+renv/staging/
+
+# Local backups, rendered QA intermediates, and dependency caches.
+/backups/
+/tmp/
+__pycache__/
+*.py[cod]
+node_modules
+
+# Cloudflare local authentication, environment, and build state.
+apps/design_planner_web/.wrangler/
+apps/design_planner_web/.dev.vars*
+apps/design_planner_web/.env*

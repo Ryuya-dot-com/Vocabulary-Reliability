@@ -1,0 +1,189 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_role": "public execution routing and numerical-release contract",
+  "generated_by": "apps/design_planner/build_static_decision_artifacts.R",
+  "source_contracts": [
+    {
+      "file": "inferential_target_registry.json",
+      "md5": "0075e0044ca4c4f782303374fa39d706"
+    },
+    {
+      "file": "design_audit.schema.json",
+      "md5": "a05fa89936d1f876bada76fa3845897e"
+    },
+    {
+      "file": "validation_registry.json",
+      "md5": "de57b708321d61580216eca5adc98c32"
+    },
+    {
+      "file": "reference_grids.json",
+      "md5": "c82d7445d7f2525131335b4d8462cc0e"
+    }
+  ],
+  "pathways": [
+    {
+      "id": "browser_static",
+      "runtime": "HTML/JavaScript plus versioned static artifacts",
+      "synchronous_request": true,
+      "r_required": false,
+      "allowed_work": ["closed-form identities", "qualitative routing", "design-graph audit", "exact lookup in published grids", "reporting prompts"],
+      "prohibited_work": ["Monte Carlo simulation", "model fitting", "unregistered interpolation", "automatic promotion to a validated envelope"],
+      "failure_mode": "explain the unavailable or blocked calculation without contacting a backend"
+    },
+    {
+      "id": "short_r_api",
+      "runtime": "stateless versioned R endpoint in a container",
+      "synchronous_request": true,
+      "r_required": true,
+      "allowed_work": ["registered deterministic evaluation not yet ported to JavaScript", "schema validation and artifact-compatible formatting"],
+      "prohibited_work": ["Monte Carlo simulation", "arbitrary user code", "session state", "filesystem persistence", "automatic retry beyond the declared policy"],
+      "failure_mode": "deadline-bound fallback to a static explanation or exact published row",
+      "implementation_status": "not_implemented_no_current_public_dependency"
+    },
+    {
+      "id": "offline_async",
+      "runtime": "offline R batch, reproducible job, or future asynchronous workflow",
+      "synchronous_request": false,
+      "r_required": true,
+      "allowed_work": ["Monte Carlo simulation", "model fitting", "new validation-envelope generation", "adversarial DGP by fitted-model matrices"],
+      "prohibited_work": ["blocking a page request", "returning an unversioned result", "publishing a result before ADEMP and performance review"],
+      "failure_mode": "retain the prior validated snapshot and report the failed job separately"
+    }
+  ],
+  "validation_states": [
+    {
+      "state": "Not identifiable",
+      "can_show_formula": false,
+      "can_run_assumption_sensitivity": false,
+      "can_publish_validated_numeric": false,
+      "required_action": "repair assignment or estimability before numerical work"
+    },
+    {
+      "state": "Outside supported model class",
+      "can_show_formula": false,
+      "can_run_assumption_sensitivity": false,
+      "can_publish_validated_numeric": false,
+      "required_action": "route to a model that represents the declared dependence"
+    },
+    {
+      "state": "Estimable but fragile",
+      "can_show_formula": true,
+      "can_run_assumption_sensitivity": true,
+      "can_publish_validated_numeric": false,
+      "required_action": "label assumptions and complete validation before a performance claim"
+    },
+    {
+      "state": "Within validated envelope",
+      "can_show_formula": true,
+      "can_run_assumption_sensitivity": true,
+      "can_publish_validated_numeric": true,
+      "required_action": "report the exact registry and artifact versions with the result"
+    }
+  ],
+  "inferential_routes": [
+    {
+      "id": "person_score",
+      "number": 1,
+      "question": "Who scored higher?",
+      "inferential_target": "Score reliability for individual differences",
+      "requires_design_audit": false,
+      "public_tool": "alpha_expectation"
+    },
+    {
+      "id": "condition_effect",
+      "number": 2,
+      "question": "Which condition worked?",
+      "inferential_target": "Treatment-effect estimation",
+      "requires_design_audit": true,
+      "public_tool": "design_audit"
+    },
+    {
+      "id": "effect_generalizability",
+      "number": 3,
+      "question": "Would it hold for other words or learners?",
+      "inferential_target": "Stability of the effect beyond sampled words or learners",
+      "requires_design_audit": true,
+      "public_tool": "effect_projection"
+    },
+    {
+      "id": "construct_scoring",
+      "number": 4,
+      "question": "What counted as knowledge?",
+      "inferential_target": "Design, construct, and scoring-rule interpretation",
+      "requires_design_audit": false,
+      "public_tool": "reporting_checklist"
+    }
+  ],
+  "calculations": [
+    {
+      "id": "claim_router_reporting",
+      "pathway": "browser_static",
+      "public_status": "available",
+      "gate": "none; one branch must be evaluated per claim",
+      "fallback": "the same versioned reporting prompts remain available offline"
+    },
+    {
+      "id": "design_graph_audit",
+      "pathway": "browser_static",
+      "public_status": "available",
+      "gate": "schema-valid explicit assignment and facet graph",
+      "fallback": "return reason codes and suppress formula/numerical guidance"
+    },
+    {
+      "id": "expected_alpha_identity",
+      "pathway": "browser_static",
+      "public_status": "available",
+      "gate": "defined score unit and valid k/rbar/pbar inputs",
+      "fallback": "report invalid input; never substitute a default as observed evidence"
+    },
+    {
+      "id": "two_facet_effect_projection",
+      "pathway": "browser_static",
+      "public_status": "available_strict_shape_only",
+      "gate": "two-condition crossed participant-by-item design with both random slopes and no additional generalization slope",
+      "fallback": "block and require a new offline multifacet projection"
+    },
+    {
+      "id": "published_grid_exact_lookup",
+      "pathway": "browser_static",
+      "public_status": "available_reference_only",
+      "gate": "coordinate must be an exact row in the R-generated artifact",
+      "fallback": "show no row; interpolation and extrapolation are prohibited"
+    },
+    {
+      "id": "sim19_between_anchor_interpolation",
+      "pathway": "browser_static",
+      "public_status": "withheld_pending_browser_parity",
+      "gate": "N strictly between published anchors plus a dedicated parity fixture",
+      "fallback": "show the two exact bracketing rows without interpolation"
+    },
+    {
+      "id": "full_qualitative_decision_table",
+      "pathway": "browser_static",
+      "public_status": "partial_four_branch_route_available",
+      "gate": "reported evidence must remain distinct from defaults and missing facts",
+      "fallback": "use branch-level evidence, limitations, and reporting starter"
+    },
+    {
+      "id": "simulation_script_generation",
+      "pathway": "offline_async",
+      "public_status": "available_in_local_shiny_only",
+      "gate": "typed design plus explicit DGP/fitted-model provenance",
+      "fallback": "retain a reproducible design JSON without executing a model"
+    },
+    {
+      "id": "simulation_execution",
+      "pathway": "offline_async",
+      "public_status": "never_run_in_page_request",
+      "gate": "ADEMP specification, seed, version lock, and output destination",
+      "fallback": "continue serving the prior validated static snapshot"
+    },
+    {
+      "id": "registered_deterministic_r_evaluation",
+      "pathway": "short_r_api",
+      "public_status": "not_implemented_no_current_public_dependency",
+      "gate": "versioned endpoint, schema, deadline, reviewed envelope, and static fallback",
+      "fallback": "browser/static route; no indefinite waiting or hidden retry"
+    }
+  ]
+}

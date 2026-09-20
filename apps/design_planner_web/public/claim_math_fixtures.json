@@ -1,0 +1,47 @@
+{
+  "schema_version": "1.0.0",
+  "alpha_expectation": [
+    {
+      "id": "table2_k15_r15",
+      "inputs": { "k": 15, "r_bar": 0.15, "p_bar": 0.55, "high_load": false },
+      "expected": { "alpha": 0.7258064516129032, "floor_ceiling_flag": false, "memory_sorting_flag": false }
+    },
+    {
+      "id": "table2_k30_r15",
+      "inputs": { "k": 30, "r_bar": 0.15, "p_bar": 0.9, "high_load": false },
+      "expected": { "alpha": 0.8411214953271028, "floor_ceiling_flag": true, "memory_sorting_flag": false }
+    },
+    {
+      "id": "high_load_warning",
+      "inputs": { "k": 50, "r_bar": 0.22, "p_bar": 0.55, "high_load": true },
+      "expected": { "alpha": 0.9337860780984719, "floor_ceiling_flag": false, "memory_sorting_flag": true }
+    }
+  ],
+  "effect_projection": [
+    {
+      "id": "balanced_components",
+      "inputs": { "n_person": 120, "k_per_condition": 15, "person_slope_sd": 0.35, "item_slope_sd": 0.18, "memory_moderation": 0.2, "memory_adjusted": false },
+      "expected": { "sampling_sd": 0.049337274617338424, "bottleneck": "both" }
+    },
+    {
+      "id": "item_bottleneck",
+      "inputs": { "n_person": 300, "k_per_condition": 15, "person_slope_sd": 0.2, "item_slope_sd": 0.6, "memory_moderation": 0, "memory_adjusted": false },
+      "expected": { "sampling_sd": 0.11015141094572203, "bottleneck": "items" }
+    },
+    {
+      "id": "participant_bottleneck_memory_adjusted",
+      "inputs": { "n_person": 24, "k_per_condition": 100, "person_slope_sd": 0.6, "item_slope_sd": 0.1, "memory_moderation": 0.3, "memory_adjusted": true },
+      "expected": { "sampling_sd": 0.12267844146385297, "bottleneck": "participants" }
+    },
+    {
+      "id": "memory_switch_unadjusted_participants",
+      "inputs": {"n_person": 120, "k_per_condition": 30, "person_slope_sd": 0.05, "item_slope_sd": 0.15, "memory_moderation": 0.65, "memory_adjusted": false},
+      "expected": {"sampling_sd": 0.06258327785172862, "bottleneck": "participants"}
+    },
+    {
+      "id": "memory_switch_adjusted_items",
+      "inputs": {"n_person": 120, "k_per_condition": 30, "person_slope_sd": 0.05, "item_slope_sd": 0.15, "memory_moderation": 0.65, "memory_adjusted": true},
+      "expected": {"sampling_sd": 0.019895560643855538, "bottleneck": "items"}
+    }
+  ]
+}

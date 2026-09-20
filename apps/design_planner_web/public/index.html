@@ -1,0 +1,429 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="referrer" content="no-referrer">
+  <meta name="robots" content="noindex, nofollow, noarchive">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <title>Vocabulary Design Planner</title>
+  <link rel="stylesheet" href="./styles.css?v=a07216b5547e">
+</head>
+<body data-mode="overview">
+  <a class="skip-link" href="#planning-entry-title">Skip to planner</a>
+
+  <header class="site-header">
+    <div class="brand-block">
+      <p class="eyebrow">Vocabulary design planner</p>
+      <h1>Plan your vocabulary study.</h1>
+      <p class="lede">Explore what more learners or more words could change.</p>
+    </div>
+    <nav class="app-nav" aria-label="Planner navigation"><button id="show-overview" class="button button-quiet" type="button">Overview</button><button id="open-all-tools" class="button button-secondary" type="button">All research tools</button></nav>
+    <div class="runtime-card" aria-label="Runtime status">
+      <span class="runtime-dot" aria-hidden="true"></span>
+      <div>
+        <strong>Works in your browser</strong>
+        <span>No data upload or account</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="page-shell">
+    <section id="planning-entry" class="planning-entry" aria-labelledby="planning-entry-title">
+      <div class="entry-copy">
+        <p class="section-label">A guided comparison · two conditions</p>
+        <h2 id="planning-entry-title" tabindex="-1">More learners.<br>More words.<br><em>What makes a difference?</em></h2>
+        <p>Start with an example, change the study size, and see which expansion reduces variation in the average effect.</p>
+        <div class="entry-actions"><button id="resume-effect-planning" class="button button-primary" type="button" hidden>Resume your comparison <span aria-hidden="true">→</span></button><button id="start-effect-planning" class="button button-primary" type="button">Explore the two-condition example <span aria-hidden="true">→</span></button></div>
+        <p id="restart-example-help" class="entry-note" hidden>Restarting loads the example design, counts, variation and 100% increase. Kept assumption sets remain and use the reset counts. Resume keeps your current inputs.</p>
+        <p class="entry-note">Illustrative assumptions, not a sample-size recommendation or a power analysis.</p>
+      </div>
+      <ol class="journey-preview" aria-label="Your three steps">
+        <li><span>01</span><div><h3>Set your starting point</h3><p>Choose learner and word counts. Review the assumptions.</p></div></li>
+        <li><span>02</span><div><h3>Explore the difference</h3><p>Move along the curves and compare actual study sizes.</p></div></li>
+        <li><span>03</span><div><h3>Take it into R</h3><p>Download the inputs, calculations, and a reproducible figure.</p></div></li>
+      </ol>
+    </section>
+    <section id="claim-router" class="claim-router" aria-labelledby="claim-router-title" hidden>
+      <header class="router-header">
+        <div>
+          <p class="section-label">Inferential target</p>
+          <h2 id="claim-router-title">Start with the claim, not the coefficient</h2>
+        </div>
+        <p>Choose one primary question. If the paper makes several claims, run each through its own branch; one coefficient does not answer all four.</p>
+      </header>
+
+      <fieldset class="claim-fieldset">
+        <legend class="visually-hidden">Primary inferential target</legend>
+        <div id="claim-options" class="claim-options"></div>
+      </fieldset>
+
+      <div class="route-result">
+        <header class="route-title-row">
+          <span id="route-branch" class="branch-badge">Branch 1</span>
+          <div>
+            <p id="route-question" class="route-question">Who scored higher?</p>
+            <h3 id="route-target">Score reliability for individual differences</h3>
+          </div>
+        </header>
+
+        <details class="evidence-details">
+          <summary>Evidence and reporting guidance for this question</summary>
+          <div class="route-evidence-grid">
+          <section aria-labelledby="aligned-evidence-title">
+            <h4 id="aligned-evidence-title">Aligned evidence</h4>
+            <ul id="aligned-evidence"></ul>
+          </section>
+          <section aria-labelledby="minimum-reporting-title">
+            <h4 id="minimum-reporting-title">Minimum reporting</h4>
+            <ul id="minimum-reporting"></ul>
+          </section>
+          <section class="boundary-list" aria-labelledby="not-license-title">
+            <h4 id="not-license-title">This does not license</h4>
+            <ul id="not-license"></ul>
+          </section>
+          </div>
+        </details>
+
+        <div id="route-gate" class="route-gate" data-gate="available">
+          <strong id="route-gate-title">Available without the design audit</strong>
+          <p id="route-gate-message">This branch can use a closed-form sensitivity calculation after the score unit is defined.</p>
+        </div>
+
+        <div class="route-tool-shell">
+          <section id="alpha-tool" class="route-tool" aria-labelledby="alpha-tool-title">
+            <div class="tool-heading">
+              <div>
+                <p class="section-label">Closed-form sensitivity</p>
+                <h4 id="alpha-tool-title">Expected alpha/KR-20</h4>
+              </div>
+              <output id="alpha-value" class="metric-value">—</output>
+            </div>
+            <div class="compact-fields">
+              <label class="field" for="alpha-k"><span>Items (k)</span><input id="alpha-k" type="number" min="2" step="1" value="15"></label>
+              <label class="field" for="alpha-rbar"><span>Average inter-item r</span><input id="alpha-rbar" type="number" min="0" max="0.99" step="0.01" value="0.15"></label>
+              <label class="field" for="alpha-pbar"><span>Expected mean accuracy</span><input id="alpha-pbar" type="number" min="0" max="1" step="0.01" value="0.55"></label>
+              <label class="check-field" for="alpha-high-load"><input id="alpha-high-load" type="checkbox"><span>Short/massed high-load design</span></label>
+            </div>
+            <ul id="alpha-notes" class="projection-notes"></ul>
+            <p class="tool-caveat">Prediction from typed assumptions, not an observed coefficient and never a pass/fail threshold.</p>
+          </section>
+
+          <section id="effect-tool" class="route-tool" aria-labelledby="effect-tool-title" hidden>
+            <nav id="planner-steps" class="planner-steps" aria-label="Comparison steps">
+              <button type="button" data-plan-step="0" aria-current="step"><span>01</span> Set up</button>
+              <button type="button" data-plan-step="1"><span>02</span> Compare</button>
+              <button type="button" data-plan-step="2"><span>03</span> Save &amp; reproduce</button>
+            </nav>
+            <p id="effect-error" class="input-error" role="alert" hidden></p>
+            <div id="plan-setup" data-plan-panel="0">
+              <p class="section-label">Step 1 of 3 · Your starting point</p>
+              <h4 id="effect-tool-title" tabindex="-1">What does your study look like?</h4>
+              <p class="planning-context">This example compares two conditions. Each learner sees words in both conditions; each word appears in both conditions across learners. <a id="review-effect-design" href="#design-details">Different design? Review the structure.</a></p>
+              <div class="setup-grid">
+                <div>
+                  <div class="compact-fields count-fields">
+                    <label class="field" for="effect-n"><span>Participants</span><input id="effect-n" type="number" min="1" step="1" value="120"><small>How many learners take part?</small></label>
+                    <label class="field" for="effect-k"><span>Words per condition per learner</span><input id="effect-k" type="number" min="1" step="1" value="15"><small>The total word set contains twice this number.</small></label>
+                  </div>
+                  <p id="plan-count-summary" class="count-summary"></p>
+                </div>
+                <aside class="explanation-note"><span class="section-label">Why both counts matter</span><p>A condition may work differently for different learners, and differently for different words. Adding learners addresses the first source of variation; adding words addresses the second.</p></aside>
+              </div>
+              <details id="effect-assumptions" class="assumption-help">
+                <summary>Review or change the variation assumptions <span class="detail-badge">Start with example values</span></summary>
+                <p>These values describe how much the difference between the two conditions varies. Larger values mean more variation. The starting values are examples for exploration, not estimates or recommended settings for your study.</p>
+                <div class="compact-fields">
+                  <label class="field" for="effect-person-sd"><span>Variation in the effect across learners (slope SD)</span><input id="effect-person-sd" type="number" min="0" step="any" value="0.35" aria-describedby="person-sd-help"><small id="person-sd-help">A teaching method may help some learners more than others. This describes differences in its benefit, not differences in overall ability.</small></label>
+                  <label class="field" for="effect-item-sd"><span>Variation in the effect across words (slope SD)</span><input id="effect-item-sd" type="number" min="0" step="any" value="0.18" aria-describedby="item-sd-help"><small id="item-sd-help">The same method may help with some words more than others. This describes differences in its benefit, not differences in word difficulty.</small></label>
+                  <label class="field" for="effect-memory"><span>Memory-related variation in the effect</span><input id="effect-memory" type="number" min="0" step="any" value="0.20" aria-describedby="memory-help"><small id="memory-help">The part of the condition difference attributed to a standardized memory measure. If entered separately here, the learner slope SD must describe the remaining variation.</small></label>
+                  <label class="check-field" for="effect-memory-adjusted"><input id="effect-memory-adjusted" type="checkbox" aria-describedby="memory-adjustment-help"><span>Assume memory moderation is fully accounted for</span></label>
+                </div>
+                <p id="memory-adjustment-help">Checking the box removes the memory component from this calculation. It assumes that component is fully accounted for; simply measuring memory does not establish this. Uncertainty in estimating the moderator effect is not included.</p>
+                <details class="assumption-guide">
+                  <summary>How do I choose values if I am unsure?</summary>
+                  <ol>
+                    <li><strong>Use comparable evidence when available.</strong> Look for slope SDs from a pilot or prior study with a comparable task, the same outcome model and the same condition coding. These inputs use the latent logit scale; raw-score SDs, accuracy percentages and standard errors are not substitutes.</li>
+                    <li><strong>Explore uncertainty.</strong> Without suitable estimates, use the example to learn the tool. Then try lower and higher plausible values, changing one assumption at a time. There is no universal cutoff for a small or large value.</li>
+                    <li><strong>Check whether the conclusion changes.</strong> Compare the same study sizes again. If the preferred expansion changes, the choice depends on the assumptions; seek better evidence before committing. Record the values you tried and why.</li>
+                  </ol>
+                </details>
+              </details>
+              <p id="assumption-summary" class="assumption-summary"></p>
+              <p class="tool-caveat">These hypothetical counts are separate from the structural audit's recorded counts.</p>
+              <div class="step-actions"><span>Next: compare possible expansions</span><button class="button button-primary" type="button" data-plan-step="1">Compare study sizes <span aria-hidden="true">→</span></button></div>
+            </div>
+            <div id="plan-compare" data-plan-panel="1" hidden>
+              <p class="section-label">Step 2 of 3 · Explore the difference</p>
+              <div class="comparison-heading"><div><h4 id="comparison-title" tabindex="-1">Where would extra effort help?</h4><p>Lower curves mean the average effect would vary less if you repeated the study with new learners and words.</p></div><div class="baseline-metric"><span>Current sampling SD</span><output id="effect-value" class="metric-value">—</output></div></div>
+              <div id="effect-comparison" hidden>
+                <!-- Keep changing explanations below the chart and slider so
+                     their wrapping cannot move the controls during a drag. -->
+                <div class="curve-legend"><span class="learner-key">More learners</span><span class="word-key">More words</span><span class="assumption-tag">Assumption-based projection</span></div>
+                <svg id="effect-curve" class="effect-curve" viewBox="0 0 640 300" role="img" aria-labelledby="curve-title curve-description">
+                  <title id="curve-title">Projected sampling SD as one study count increases</title>
+                  <desc id="curve-description">Two curves compare increasing learners with increasing words. Use the slider or the exact-value table for the same values. Click a point on the chart to select an increase.</desc>
+                  <g id="curve-grid"></g>
+                  <path id="learner-curve" class="curve-line learner-line"></path><path id="word-curve" class="curve-line word-line"></path>
+                  <line id="curve-cursor" class="curve-cursor" y1="24" y2="244"></line>
+                  <circle id="learner-dot" class="curve-dot learner-dot" r="5"></circle><circle id="word-dot" class="curve-dot word-dot" r="5"></circle>
+                  <text x="64" y="14" class="axis-title">Projected sampling SD</text><text id="curve-x-title" x="348" y="291" text-anchor="middle" class="axis-title">Requested increase in one count (%)</text>
+                </svg>
+                <div class="explore-control"><label for="effect-increase"><span id="increase-label">Increase one count by</span><output id="increase-value" for="effect-increase" aria-hidden="true">100%</output></label><input id="effect-increase" type="range" min="0" max="200" step="5" value="100" aria-labelledby="increase-label" aria-describedby="curve-help"><div class="range-labels" aria-hidden="true"><span>No increase</span><span>Double</span><span>Triple</span></div></div>
+                <p id="curve-help" class="tool-caveat">Hover to inspect. Click or use the slider to select. Arrow keys move the slider. Counts round up to whole learners or words per condition.</p>
+                <p id="curve-preview-label" class="preview-label"></p>
+                <div class="curve-readout"><div class="learner-readout"><span>More learners</span><strong id="curve-learner-sd"></strong><p id="curve-learner-counts"></p><span id="curve-learner-reduction" class="readout-reduction"></span></div><div class="word-readout"><span>More words</span><strong id="curve-word-sd"></strong><p id="curve-word-counts"></p><span id="curve-word-reduction" class="readout-reduction"></span></div></div>
+                <section class="comparison-takeaway" aria-labelledby="effect-takeaway">
+                  <p id="comparison-selection" class="section-label"></p>
+                  <div role="status" aria-atomic="true"><h5 id="effect-takeaway"></h5><p id="effect-interpretation" class="planning-answer"></p></div>
+                  <p class="takeaway-limit">A smaller sampling SD means less variation across repeated samples. It does not tell you the chance of detecting an effect (power).</p>
+                  <div class="takeaway-actions"><button id="keep-effect-assumptions" class="button button-secondary" type="button" aria-describedby="keep-assumptions-help" disabled>Keep these assumptions (0/3)</button><button id="review-effect-assumptions" class="button button-quiet" type="button">Try different assumptions <span aria-hidden="true">→</span></button></div>
+                  <p id="keep-assumptions-help" class="takeaway-limit">Keep up to three sets to compare how the conclusion changes.</p>
+                </section>
+                <p class="tool-caveat">The two expansions need not cost the same. Learning time and the response process are held constant here; extra words may change exposure, fatigue, or difficulty.</p>
+                <details class="comparison-details"><summary>Exact values and variance contributions</summary>
+                  <p id="effect-variance-explanation"></p>
+                  <div class="comparison-table-wrap" tabindex="0" role="region" aria-label="Exact sampling SD comparison">
+                    <table class="comparison-table"><caption>Sampling SD comparison — all bars share the same scale</caption><thead><tr><th scope="col">Plan</th><th scope="col">Learners / total words</th><th scope="col">Projected SD</th><th scope="col">SD reduction</th></tr></thead><tbody id="effect-comparison-rows"></tbody></table>
+                  </div>
+                  <dl class="projection-components"><div><dt>Main bottleneck</dt><dd id="effect-bottleneck">—</dd></div><div><dt>Participant variance term</dt><dd id="effect-person-component">—</dd></div><div><dt>Item variance term</dt><dd id="effect-item-component">—</dd></div></dl>
+                </details>
+                <details id="assumption-comparison" class="comparison-details">
+                  <summary>Compare assumption sets <span id="assumption-set-count" class="detail-badge">0 of 3 kept</span></summary>
+                  <p>Keep a set, change the variation assumptions, then keep another. Each set uses the same study sizes and selected increase; changing either recalculates all sets.</p>
+                  <p id="assumption-common-counts" class="count-summary"></p>
+                  <p id="assumption-comparison-summary" class="set-comparison-answer" role="status"></p>
+                  <div id="assumption-set-cards" class="assumption-set-cards"></div>
+                  <button id="edit-comparison-assumptions" class="button button-secondary" type="button">Change assumptions to compare another set →</button>
+                  <p class="tool-caveat">Only the sets you keep are compared here. Agreement does not establish robustness beyond those sets or estimate power. Sets stay on this page until reload; the R download includes their inputs and comparison.</p>
+                </details>
+              </div>
+              <p class="scope-caption">This projection excludes response-level estimation error. It is not a fitted GLMM standard error, power, or a validation of your study.</p>
+              <div class="step-actions"><button class="button button-secondary" type="button" data-plan-step="0">← Edit inputs</button><button class="button button-primary" type="button" data-plan-step="2">Save &amp; reproduce →</button></div>
+            </div>
+            <div id="plan-export" data-plan-panel="2" hidden>
+              <p class="section-label">Step 3 of 3 · Keep the reasoning</p>
+              <h4 id="export-title" tabindex="-1">Reproduce this comparison in R.</h4>
+              <p>Download a standalone script with your current inputs, selected comparison, and sensitivity curves. It uses base R; no packages or uploads are needed.</p>
+              <div class="export-banner"><div><strong>vocabulary-design-sensitivity.R</strong><p>Run in R or RStudio. Saves a comparison CSV, a curve CSV, and a PDF figure in your working directory.</p></div><button id="download-effect-r" class="button button-primary" type="button" disabled>Download R code ↓</button></div>
+              <p id="assumption-export-note" class="tool-caveat"></p>
+              <p id="r-download-status" role="status"></p>
+              <details class="code-preview"><summary>Inspect the R code before downloading</summary><pre><code id="effect-r-code"></code></pre></details>
+              <h5>Before choosing a design</h5><p id="effect-next-step"></p>
+              <p class="scope-caption">The script reproduces the closed-form projection. It does not simulate responses, fit a model, or estimate power.</p>
+              <div class="step-actions"><button class="button button-secondary" type="button" data-plan-step="1">← Back to comparison</button><span>Your inputs are kept while this page stays open.</span></div>
+            </div>
+          </section>
+
+          <section id="reference-grid-tool" class="route-tool" aria-labelledby="reference-grid-title" hidden>
+            <div class="tool-heading">
+              <div>
+                <p class="section-label">Published simulation snapshot</p>
+                <h4 id="reference-grid-title">Exact reference-grid lookup</h4>
+              </div>
+              <span class="exact-badge">Exact rows only</span>
+            </div>
+            <div class="compact-fields grid-lookup-fields">
+              <label class="field" for="grid-family"><span>Simulation family</span><select id="grid-family"></select></label>
+              <label class="field" for="grid-scenario"><span>Published scenario</span><select id="grid-scenario"></select></label>
+              <label class="field" for="grid-n"><span>Participants</span><select id="grid-n"></select></label>
+              <label id="grid-scoring-field" class="field" for="grid-scoring"><span>Scoring model</span><select id="grid-scoring"></select></label>
+              <label id="grid-k-field" class="field" for="grid-k" hidden><span>Items per condition</span><select id="grid-k"></select></label>
+              <label id="grid-model-field" class="field" for="grid-model" hidden><span>Analysis model</span><select id="grid-model"></select></label>
+            </div>
+            <p id="grid-row-title" class="grid-row-title"></p>
+            <dl id="reference-metrics" class="reference-metrics"></dl>
+            <ul id="reference-limitations" class="projection-notes"></ul>
+            <p id="grid-design-note" class="grid-design-note"></p>
+            <p class="tool-caveat">The selected row is copied from a published 500-replication grid. No interpolation or extrapolation is performed, and the row is never applied automatically to the current design.</p>
+          </section>
+
+          <section id="qualitative-tool" class="route-tool" aria-labelledby="qualitative-tool-title" hidden>
+            <p class="section-label">Qualitative route</p>
+            <h4 id="qualitative-tool-title">No single-number answer</h4>
+            <p id="qualitative-tool-message">Use the aligned evidence and reporting prompts above.</p>
+          </section>
+
+          <section id="reporting-panel" class="reporting-starter" aria-labelledby="reporting-starter-title">
+            <p class="section-label">Drafting prompt</p>
+            <h4 id="reporting-starter-title">Reporting starter</h4>
+            <p id="reporting-starter"></p>
+          </section>
+        </div>
+      </div>
+    </section>
+
+    <details id="design-details" class="design-details" hidden>
+      <summary>Inspect or change the design structure</summary>
+    <div class="workspace-grid">
+      <form id="design-form" class="audit-form" autocomplete="off" novalidate>
+        <section class="form-section" aria-labelledby="template-title">
+          <header class="section-heading">
+            <span class="step-number">01</span>
+            <div>
+              <p class="section-label">Starting point</p>
+              <h2 id="template-title">Load a design example</h2>
+            </div>
+          </header>
+          <label class="field field-wide" for="template-select">
+            <span>Design example</span>
+            <select id="template-select"></select>
+            <small id="template-description">Examples expose a failure mode; they are not recommended defaults.</small>
+          </label>
+        </section>
+
+        <section class="form-section" aria-labelledby="units-title">
+          <header class="section-heading">
+            <span class="step-number">02</span>
+            <div>
+              <p class="section-label">Design units</p>
+              <h2 id="units-title">Separate assignment from analysis</h2>
+            </div>
+          </header>
+          <div class="field-grid">
+            <label class="field" for="assignment-mode">
+              <span>Assignment mode</span>
+              <select id="assignment-mode">
+                <option value="within_unit">Within assignment unit</option>
+                <option value="between_unit">Between assignment units</option>
+                <option value="crossed_counterbalance">Crossed counterbalance</option>
+              </select>
+            </label>
+            <label class="field" for="condition-levels">
+              <span>Condition levels</span>
+              <input id="condition-levels" type="number" min="2" step="1" inputmode="numeric">
+            </label>
+            <label class="field field-wide" for="assignment-facets">
+              <span>Assignment facets</span>
+              <input id="assignment-facets" type="text" placeholder="participant, item">
+              <small>Comma-separated facet IDs. Use two or more for crossed counterbalancing.</small>
+            </label>
+            <label class="field field-wide" for="sampling-facets">
+              <span>Sampling facets</span>
+              <input id="sampling-facets" type="text" placeholder="participant, item, class">
+            </label>
+            <label class="field field-wide" for="assignment-replication">
+              <span>Independent assignment units per condition</span>
+              <input id="assignment-replication" type="text" placeholder="6, 6">
+              <small>Count independent assigned units—not rows, repeated responses, or learners nested in one assigned class.</small>
+            </label>
+            <label class="field" for="observation-unit">
+              <span>Observation unit</span>
+              <input id="observation-unit" type="text" placeholder="participant_item_response">
+            </label>
+            <label class="field" for="analysis-unit">
+              <span>Analysis unit</span>
+              <input id="analysis-unit" type="text" placeholder="participant_item_response">
+            </label>
+          </div>
+        </section>
+
+        <section class="form-section" aria-labelledby="facets-title">
+          <header class="section-heading section-heading-action">
+            <div class="heading-cluster">
+              <span class="step-number">03</span>
+              <div>
+                <p class="section-label">Design graph</p>
+                <h2 id="facets-title">Declare every facet explicitly</h2>
+              </div>
+            </div>
+            <button id="add-facet" class="button button-secondary" type="button">Add facet</button>
+          </header>
+          <p class="section-help">A blank parent means crossed or top-level. “Condition varies within” determines whether a facet-specific condition slope is estimable.</p>
+          <div class="facet-table-wrap">
+            <table class="facet-table">
+              <thead>
+                <tr>
+                  <th scope="col">Facet ID</th>
+                  <th scope="col">Parent</th>
+                  <th scope="col">Levels</th>
+                  <th scope="col">Condition varies within</th>
+                  <th scope="col">Generalization target</th>
+                  <th scope="col">Model role</th>
+                  <th scope="col">Dependence</th>
+                  <th scope="col">Slope</th>
+                  <th scope="col"><span class="visually-hidden">Remove</span></th>
+                </tr>
+              </thead>
+              <tbody id="facet-rows"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <div class="form-actions">
+          <button id="evaluate-design" class="button button-primary" type="button">Evaluate structure</button>
+          <button id="reset-template" class="button button-quiet" type="button">Reset example</button>
+          <span class="autoscan-note">The audit updates locally as inputs change.</span>
+        </div>
+      </form>
+
+      <aside id="audit-result" class="result-panel" aria-labelledby="result-title" aria-live="polite">
+        <div class="result-sticky">
+          <p class="section-label">Current decision</p>
+          <div id="state-card" class="state-card">
+            <span id="state-kicker" class="state-kicker">Validation state</span>
+            <h2 id="result-title">Waiting for design</h2>
+            <p id="state-description">Complete the design graph to evaluate identification and scope.</p>
+          </div>
+
+          <section class="result-section" aria-labelledby="reasons-title">
+            <div class="result-heading">
+              <h3 id="reasons-title">Reasons and next actions</h3>
+              <span id="issue-count" class="count-badge">0</span>
+            </div>
+            <div id="issue-list" class="issue-list"></div>
+          </section>
+
+          <section class="result-section" aria-labelledby="formula-title">
+            <h3 id="formula-title">Formula suggestion</h3>
+            <pre id="formula-output" class="formula-box"><code>Not available</code></pre>
+            <p class="result-caption">A syntax suggestion only. It is suppressed when the design is unidentified or outside the supported model class.</p>
+          </section>
+
+          <section class="result-section" aria-labelledby="claims-title">
+            <h3 id="claims-title">Claim boundary</h3>
+            <dl class="claim-grid">
+              <div>
+                <dt>Generalizes over</dt>
+                <dd id="generalizes-output">None established</dd>
+              </div>
+              <div>
+                <dt>Does not generalize over</dt>
+                <dd id="not-generalizes-output">None flagged</dd>
+              </div>
+            </dl>
+          </section>
+
+          <details class="payload-panel">
+            <summary>Inspect audit payload</summary>
+            <div class="payload-actions">
+              <button id="copy-payload" class="button button-secondary" type="button">Copy JSON</button>
+              <button id="download-payload" class="button button-secondary" type="button">Download JSON</button>
+            </div>
+            <pre id="payload-output" class="payload-box"><code>{}</code></pre>
+          </details>
+
+          <div class="logic-meta">
+            <span>Logic <strong id="logic-version">—</strong></span>
+            <span>Decision <strong id="decision-version">—</strong></span>
+            <span>Registry <strong id="registry-version">—</strong></span>
+            <span id="registry-count">0 validated envelopes</span>
+          </div>
+        </div>
+      </aside>
+    </div>
+    </details>
+    <details class="boundary-details"><summary>What this planner can and cannot tell you</summary><p>Explore assumptions and identify structural problems. The planner cannot certify a design or replace a fitted analysis. The numerical validation registry is empty; passing a structural check does not establish numerical performance.</p></details>
+  </main>
+
+  <footer class="site-footer">
+    <p>No uploads, accounts, or tracking. Refreshing this page clears your inputs.</p>
+  </footer>
+
+  <script src="./design_audit.js?v=ab6c932ff10d"></script>
+  <script src="./claim_math.js?v=0cd28a01db5b"></script>
+  <script src="./audit_data.js?v=bb53d91c214f"></script>
+  <script src="./claim_data.js?v=aefe802388f1"></script>
+  <script src="./app.js?v=8e8e62f0b90e"></script>
+</body>
+</html>

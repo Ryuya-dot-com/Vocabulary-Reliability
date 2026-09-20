@@ -1,0 +1,232 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_role": "R-computed cross-runtime golden outputs",
+  "generated_by": "apps/design_planner/build_static_decision_artifacts.R",
+  "source_contracts": [
+    {
+      "file": "design_audit_fixtures.json",
+      "md5": "bb997bc3c6d3caea434ea6627dc0a44f"
+    },
+    {
+      "file": "claim_math_fixtures.json",
+      "md5": "9644f00612559e8f01bb2d18533103b4"
+    },
+    {
+      "file": "reference_grids.json",
+      "md5": "c82d7445d7f2525131335b4d8462cc0e"
+    }
+  ],
+  "design_audit": [
+    {
+      "id": "hierarchical_crossed_validated",
+      "state": "Within validated envelope",
+      "can_compute": true,
+      "issue_codes": [],
+      "formula_suggestion": "outcome ~ condition_c + diag(1 + condition_c | prefecture) + diag(1 + condition_c | school) + diag(1 + condition_c | class) + diag(1 + condition_c | participant) + diag(1 + condition_c | item)",
+      "claim_boundary": {
+        "generalizes_over": [
+          "prefecture",
+          "school",
+          "class",
+          "participant",
+          "item"
+        ],
+        "does_not_generalize_over": []
+      }
+    },
+    {
+      "id": "one_class_per_condition",
+      "state": "Not identifiable",
+      "can_compute": false,
+      "issue_codes": [
+        "assignment_not_replicated"
+      ],
+      "formula_suggestion": "outcome ~ condition_c + (1 | participant)",
+      "claim_boundary": {
+        "generalizes_over": [
+          "participant"
+        ],
+        "does_not_generalize_over": []
+      }
+    },
+    {
+      "id": "two_facet_counterbalanced",
+      "state": "Estimable but fragile",
+      "can_compute": true,
+      "issue_codes": [],
+      "formula_suggestion": "outcome ~ condition_c + diag(1 + condition_c | participant) + diag(1 + condition_c | item)",
+      "claim_boundary": {
+        "generalizes_over": [
+          "participant",
+          "item"
+        ],
+        "does_not_generalize_over": []
+      }
+    },
+    {
+      "id": "spatial_prefecture",
+      "state": "Outside supported model class",
+      "can_compute": false,
+      "issue_codes": [
+        "unsupported_spatial"
+      ],
+      "formula_suggestion": "outcome ~ condition_c + diag(1 + condition_c | prefecture) + diag(1 + condition_c | participant)",
+      "claim_boundary": {
+        "generalizes_over": [
+          "prefecture",
+          "participant"
+        ],
+        "does_not_generalize_over": []
+      }
+    },
+    {
+      "id": "slope_without_within_facet_variation",
+      "state": "Not identifiable",
+      "can_compute": false,
+      "issue_codes": [
+        "slope_not_estimable"
+      ],
+      "formula_suggestion": "outcome ~ condition_c + diag(1 + condition_c | class) + (1 | participant)",
+      "claim_boundary": {
+        "generalizes_over": [
+          "class",
+          "participant"
+        ],
+        "does_not_generalize_over": []
+      }
+    },
+    {
+      "id": "omitted_item_slope",
+      "state": "Estimable but fragile",
+      "can_compute": true,
+      "issue_codes": [
+        "missing_random_slope"
+      ],
+      "formula_suggestion": "outcome ~ condition_c + diag(1 + condition_c | participant) + (1 | item)",
+      "claim_boundary": {
+        "generalizes_over": [
+          "participant"
+        ],
+        "does_not_generalize_over": [
+          "item"
+        ]
+      }
+    },
+    {
+      "id": "cyclic_hierarchy",
+      "state": "Not identifiable",
+      "can_compute": false,
+      "issue_codes": [
+        "parent_cycle",
+        "parent_cycle",
+        "parent_cycle"
+      ],
+      "formula_suggestion": "outcome ~ condition_c + diag(1 + condition_c | school) + diag(1 + condition_c | class) + diag(1 + condition_c | participant)",
+      "claim_boundary": {
+        "generalizes_over": [
+          "school",
+          "class",
+          "participant"
+        ],
+        "does_not_generalize_over": []
+      }
+    }
+  ],
+  "claim_math": {
+    "alpha_expectation": [
+      {
+        "id": "table2_k15_r15",
+        "alpha": 0.72580645161290325,
+        "floor_ceiling_flag": false,
+        "memory_sorting_flag": false
+      },
+      {
+        "id": "table2_k30_r15",
+        "alpha": 0.8411214953271029,
+        "floor_ceiling_flag": true,
+        "memory_sorting_flag": false
+      },
+      {
+        "id": "high_load_warning",
+        "alpha": 0.93378607809847203,
+        "floor_ceiling_flag": false,
+        "memory_sorting_flag": true
+      }
+    ],
+    "effect_projection": [
+      {
+        "id": "balanced_components",
+        "sampling_sd": 0.049337274617338424,
+        "bottleneck": "both"
+      },
+      {
+        "id": "item_bottleneck",
+        "sampling_sd": 0.11015141094572203,
+        "bottleneck": "items"
+      },
+      {
+        "id": "participant_bottleneck_memory_adjusted",
+        "sampling_sd": 0.12267844146385297,
+        "bottleneck": "participants"
+      },
+      {
+        "id": "memory_switch_unadjusted_participants",
+        "sampling_sd": 0.062583277851728625,
+        "bottleneck": "participants"
+      },
+      {
+        "id": "memory_switch_adjusted_items",
+        "sampling_sd": 0.019895560643855538,
+        "bottleneck": "items"
+      }
+    ]
+  },
+  "reference_grid_sentinels": [
+    {
+      "scenario": "partial_only_effect",
+      "scenario_label": "Context mainly creates partial knowledge",
+      "n_person": 24,
+      "model": "lenient_adjusted",
+      "scoring_label": "Lenient any knowledge",
+      "term": "condition_num",
+      "n_rep": 500,
+      "estimable_rate": 1,
+      "singular_rate": 0.075999999999999998,
+      "sig_rate": 0.79800000000000004,
+      "beta_median": 0.49156869802757203,
+      "beta_q25": 0.36496493481235798,
+      "beta_q75": 0.60604775333933703,
+      "se_median": 0.16901436567985001
+    },
+    {
+      "scenario": "true_null_balanced",
+      "scenario_label": "True null, balanced lists",
+      "n_person": 60,
+      "model": "strict_adjusted",
+      "scoring_label": "Strict full recall",
+      "term": "condition_num",
+      "n_rep": 500,
+      "estimable_rate": 1,
+      "singular_rate": 0.034000000000000002,
+      "sig_rate": 0.040000000000000001,
+      "beta_median": 0.0109819618830224,
+      "beta_q25": -0.13073786797638101,
+      "beta_q75": 0.11466289736514799,
+      "se_median": 0.18717448216889701
+    },
+    {
+      "scenario": "alpha_high_item_sensitive",
+      "scenario_label": "High alpha, item-sensitive effect",
+      "n_person": 120,
+      "k_per_condition": 30,
+      "model": "base_condition",
+      "n_rep": 500,
+      "estimable_rate": 1,
+      "sig_rate": 1,
+      "condition_beta_median": 0.72312726833066299,
+      "memory_interaction_sig_rate": null,
+      "r2_marginal_median": 0.028214519266784598,
+      "delta": 0.75
+    }
+  ]
+}

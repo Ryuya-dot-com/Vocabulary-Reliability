@@ -1,0 +1,61 @@
+n_person,scenario,scenario_label,model,term,n_rep,estimable_rate,singular_rate,sig_rate,beta_median,beta_q25,beta_q75,se_median
+24,balanced_moderate,"Balanced lists, moderate context effect",lenient_adjusted,condition_num,500,1,0.084,0.314,0.2604028804216122,0.13792472479383305,0.3603171745670144,0.17144447680398994
+24,balanced_moderate,"Balanced lists, moderate context effect",partial_lmm_adjusted,condition_num,500,1,0.062,0.414,0.04106406355539221,0.024965577039687683,0.05830934259688339,0.023481178860265624
+24,balanced_moderate,"Balanced lists, moderate context effect",partial_memory_interaction,condition_num:memory_z,500,1,0.122,0.066,0.010742729288257681,-0.00595493264030732,0.029297684105063275,0.023964920192868795
+24,balanced_moderate,"Balanced lists, moderate context effect",strict_adjusted,condition_num,500,1,0.198,0.296,0.41521806449385856,0.2152647569982995,0.6089213184739337,0.2812791669933257
+24,balanced_moderate,"Balanced lists, moderate context effect",strict_memory_interaction,condition_num:memory_z,500,1,0.448,0.03,-0.020336991804864795,-0.2125765361031105,0.16629723949092898,0.3195891381509777
+24,balanced_moderate,"Balanced lists, moderate context effect",strict_unadjusted,condition_num,500,1,0.19,0.296,0.41087429218572513,0.21741427693831422,0.6050983591552065,0.28039175006953054
+24,imperfect_counterbalance,Imperfect counterbalance with item-feature skew,lenient_adjusted,condition_num,500,1,0.04,0.452,0.33102492440463743,0.1978175033894455,0.459951430349532,0.18106150880851557
+24,imperfect_counterbalance,Imperfect counterbalance with item-feature skew,partial_lmm_adjusted,condition_num,500,1,0.014,0.532,0.050419930852386746,0.029235857347523014,0.068106362862435793,0.024742689739518993
+24,imperfect_counterbalance,Imperfect counterbalance with item-feature skew,partial_memory_interaction,condition_num:memory_z,500,1,0.066,0.118,0.01791529080190952,-8.178271716149217e-4,0.0347792719122139,0.02383891150332544
+24,imperfect_counterbalance,Imperfect counterbalance with item-feature skew,strict_adjusted,condition_num,500,1,0.128,0.402,0.5066219428182566,0.31442379675449716,0.7022646600264868,0.2943465299606724
+24,imperfect_counterbalance,Imperfect counterbalance with item-feature skew,strict_memory_interaction,condition_num:memory_z,500,1,0.448,0.074,-0.02295300200726166,-0.2699590851244834,0.20078053082757974,0.3211041301328067
+24,imperfect_counterbalance,Imperfect counterbalance with item-feature skew,strict_unadjusted,condition_num,500,1,0.126,0.398,0.5061456010073828,0.318077811137414,0.6992593372711773,0.29369216262149245
+24,partial_only_effect,Context mainly creates partial knowledge,lenient_adjusted,condition_num,500,1,0.076,0.798,0.4915686980275715,0.3649649348123581,0.6060477533393374,0.16901436567984976
+24,partial_only_effect,Context mainly creates partial knowledge,partial_lmm_adjusted,condition_num,500,1,0.04,0.762,0.06428311690010396,0.047723858121848456,0.0792960753111785,0.02330764072253794
+24,partial_only_effect,Context mainly creates partial knowledge,partial_memory_interaction,condition_num:memory_z,500,1,0.08,0.06,0.01390931323728521,-0.0020424116118260426,0.0277502913376291,0.02377259562205122
+24,partial_only_effect,Context mainly creates partial knowledge,strict_adjusted,condition_num,500,1,0.198,0.192,0.33181517553762285,0.17585009352913328,0.4968535026467252,0.2808058036903308
+24,partial_only_effect,Context mainly creates partial knowledge,strict_memory_interaction,condition_num:memory_z,500,1,0.48,0.042,-0.015562189660576384,-0.2459801051888905,0.20782705123330525,0.31566641101665904
+24,partial_only_effect,Context mainly creates partial knowledge,strict_unadjusted,condition_num,500,1,0.192,0.192,0.32908379561714485,0.17780321098212643,0.4977090457259039,0.2799383989898256
+24,true_null_balanced,"True null, balanced lists",lenient_adjusted,condition_num,500,1,0.1,0.044,-0.00728101120061022,-0.11855925401806287,0.13276369929349363,0.1736429324702949
+24,true_null_balanced,"True null, balanced lists",partial_lmm_adjusted,condition_num,500,1,0.06,0.058,9.683981879701153e-4,-0.01657254318714403,0.01810976528611062,0.02250133534096492
+24,true_null_balanced,"True null, balanced lists",partial_memory_interaction,condition_num:memory_z,500,1,0.12,0.054,-0.001816755802259245,-0.01651325411379532,0.015218217975321096,0.023000267824197316
+24,true_null_balanced,"True null, balanced lists",strict_adjusted,condition_num,500,1,0.228,0.044,0.00776975735605427,-0.20852608260225855,0.1963793245885782,0.2987197587626249
+24,true_null_balanced,"True null, balanced lists",strict_memory_interaction,condition_num:memory_z,500,1,0.49,0.05,-0.014152517118374685,-0.2346147609327377,0.19047290199418865,0.33807139989590673
+24,true_null_balanced,"True null, balanced lists",strict_unadjusted,condition_num,500,1,0.22,0.044,0.00265847729493304,-0.20551476728889612,0.19926643193994015,0.29783001989130087
+24,weak_moderated_missing,Weak effect with aptitude-linked delayed attrition,lenient_adjusted,condition_num,500,1,0.128,0.178,0.18062030694838488,0.05826316358780463,0.3134567935072273,0.18731122476238315
+24,weak_moderated_missing,Weak effect with aptitude-linked delayed attrition,partial_lmm_adjusted,condition_num,500,1,0.08,0.276,0.032285991450784646,0.015006167876615868,0.052819120827649335,0.025367690215946558
+24,weak_moderated_missing,Weak effect with aptitude-linked delayed attrition,partial_memory_interaction,condition_num:memory_z,500,1,0.144,0.568,0.05430894174484755,0.03824504772956309,0.07294146568255115,0.025780533036670862
+24,weak_moderated_missing,Weak effect with aptitude-linked delayed attrition,strict_adjusted,condition_num,500,1,0.284,0.234,0.37328710003539456,0.17343002706013821,0.575441314888012,0.30138482020790514
+24,weak_moderated_missing,Weak effect with aptitude-linked delayed attrition,strict_memory_interaction,condition_num:memory_z,500,1,0.526,0.208,0.40724626233236094,0.15012802238878908,0.6707328241780127,0.360848457525665
+24,weak_moderated_missing,Weak effect with aptitude-linked delayed attrition,strict_unadjusted,condition_num,500,1,0.284,0.24,0.3739077105026297,0.17851910812336858,0.5778344015932833,0.30043348408418813
+60,balanced_moderate,"Balanced lists, moderate context effect",lenient_adjusted,condition_num,500,1,0,0.588,0.23710265074779394,0.16146485670185637,0.313132468058206,0.10813042685952176
+60,balanced_moderate,"Balanced lists, moderate context effect",partial_lmm_adjusted,condition_num,500,1,0,0.768,0.0392499555100128,0.029757608505463017,0.05020447844411534,0.014793105900098845
+60,balanced_moderate,"Balanced lists, moderate context effect",partial_memory_interaction,condition_num:memory_z,500,1,0.004,0.142,0.01161951128221411,0.0018402961774089675,0.022247973912036072,0.01494793371351366
+60,balanced_moderate,"Balanced lists, moderate context effect",strict_adjusted,condition_num,500,1,0.03,0.63,0.39379389348178717,0.2840154879917137,0.5159697612733706,0.1761312124944444
+60,balanced_moderate,"Balanced lists, moderate context effect",strict_memory_interaction,condition_num:memory_z,500,1,0.132,0.042,-0.014008649045760045,-0.13704833637373687,0.11340025351705307,0.19183735400946544
+60,balanced_moderate,"Balanced lists, moderate context effect",strict_unadjusted,condition_num,500,1,0.028,0.63,0.3935391215709194,0.28371314944832926,0.5153651166212708,0.17576859975572617
+60,imperfect_counterbalance,Imperfect counterbalance with item-feature skew,lenient_adjusted,condition_num,500,1,0,0.616,0.2684067560000707,0.1984776567327156,0.35843154527502474,0.11922987540803431
+60,imperfect_counterbalance,Imperfect counterbalance with item-feature skew,partial_lmm_adjusted,condition_num,500,1,0,0.714,0.041445044866107804,0.030565912953152082,0.05283329328456706,0.016168269483908464
+60,imperfect_counterbalance,Imperfect counterbalance with item-feature skew,partial_memory_interaction,condition_num:memory_z,500,1,0.006,0.208,0.01677319909974764,0.006177532962354082,0.026690190367430748,0.014872633037158633
+60,imperfect_counterbalance,Imperfect counterbalance with item-feature skew,strict_adjusted,condition_num,500,1,0.008,0.648,0.44451793686745267,0.31963319892099024,0.5772156173589464,0.19143926262064292
+60,imperfect_counterbalance,Imperfect counterbalance with item-feature skew,strict_memory_interaction,condition_num:memory_z,500,1,0.104,0.054,-0.04227385241123083,-0.17837671087228507,0.08622742748950574,0.19490719991751532
+60,imperfect_counterbalance,Imperfect counterbalance with item-feature skew,strict_unadjusted,condition_num,500,1,0.008,0.65,0.44452255085560244,0.31680942731451056,0.5754805801405547,0.19118014781487064
+60,partial_only_effect,Context mainly creates partial knowledge,lenient_adjusted,condition_num,500,1,0.002,0.996,0.47407350527620506,0.39821252295561027,0.5498745310717947,0.10694823140007284
+60,partial_only_effect,Context mainly creates partial knowledge,partial_lmm_adjusted,condition_num,500,1,0,0.992,0.06188624172169012,0.05123476939699741,0.07326795968286309,0.01469584646447672
+60,partial_only_effect,Context mainly creates partial knowledge,partial_memory_interaction,condition_num:memory_z,500,1,0,0.148,0.011733752030067185,0.0024689197276268025,0.023003300509683383,0.014827472077831715
+60,partial_only_effect,Context mainly creates partial knowledge,strict_adjusted,condition_num,500,1,0.024,0.438,0.31918785773021185,0.19423809381015622,0.44556402305102455,0.17774042656099742
+60,partial_only_effect,Context mainly creates partial knowledge,strict_memory_interaction,condition_num:memory_z,500,1,0.12,0.052,-0.021143263474882573,-0.1542434708334581,0.10626545644047675,0.19394954771184802
+60,partial_only_effect,Context mainly creates partial knowledge,strict_unadjusted,condition_num,500,1,0.024,0.44,0.3199654781411676,0.19700153082938898,0.4447521159638276,0.1775901575849116
+60,true_null_balanced,"True null, balanced lists",lenient_adjusted,condition_num,500,1,0,0.04,-0.004589316554715615,-0.06651900680740631,0.06980295997814896,0.10982450843168556
+60,true_null_balanced,"True null, balanced lists",partial_lmm_adjusted,condition_num,500,1,0,0.042,-4.319377084841432e-4,-0.0088379573580037,0.009386916410174615,0.014232510322599791
+60,true_null_balanced,"True null, balanced lists",partial_memory_interaction,condition_num:memory_z,500,1,0,0.042,-9.009480036106165e-5,-0.009916324877013223,0.009347512744795455,0.014425553213094744
+60,true_null_balanced,"True null, balanced lists",strict_adjusted,condition_num,500,1,0.034,0.04,0.010981961883022369,-0.13073786797638148,0.11466289736514759,0.18717448216889696
+60,true_null_balanced,"True null, balanced lists",strict_memory_interaction,condition_num:memory_z,500,1,0.146,0.036,-0.0069400542675507205,-0.15189732129147226,0.13523640928615757,0.20479891684799162
+60,true_null_balanced,"True null, balanced lists",strict_unadjusted,condition_num,500,1,0.032,0.04,0.00285452397032068,-0.1275967731897525,0.11555514138362669,0.18697398600375587
+60,weak_moderated_missing,Weak effect with aptitude-linked delayed attrition,lenient_adjusted,condition_num,500,1,0.006,0.36,0.1831660320716973,0.10844117734577195,0.26168843886621723,0.11940313962797004
+60,weak_moderated_missing,Weak effect with aptitude-linked delayed attrition,partial_lmm_adjusted,condition_num,500,1,0.006,0.56,0.03374733300155789,0.022859244302296616,0.04538959997303929,0.01615785815343858
+60,weak_moderated_missing,Weak effect with aptitude-linked delayed attrition,partial_memory_interaction,condition_num:memory_z,500,1,0.01,0.93,0.058126353558113665,0.04564631632820853,0.06934540681064827,0.016179539180352965
+60,weak_moderated_missing,Weak effect with aptitude-linked delayed attrition,strict_adjusted,condition_num,500,1,0.036,0.548,0.38733548917559657,0.2655594169623229,0.5069623228318436,0.18917727006896262
+60,weak_moderated_missing,Weak effect with aptitude-linked delayed attrition,strict_memory_interaction,condition_num:memory_z,500,1,0.182,0.42,0.38656935613125426,0.2389755809304126,0.5286952519991716,0.2147121864698888
+60,weak_moderated_missing,Weak effect with aptitude-linked delayed attrition,strict_unadjusted,condition_num,500,1,0.036,0.54,0.3859496869809106,0.26364612087937506,0.5073820518629879,0.18881706002442575

@@ -1,0 +1,316 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_role": "deterministic Shiny feature, dependency, data, and lifecycle inventory",
+  "generated_by": "apps/design_planner/build_app_inventory.R",
+  "role_boundary": {
+    "status": "optional_companion",
+    "primary_products": ["revised manuscript", "point-by-point response letter", "reproducible analysis record"],
+    "manuscript_understanding_requires_app": false,
+    "reviewer_judgment_requires_app": false,
+    "primary_result_reproduction_requires_app": false,
+    "app_may_certify_design": false,
+    "app_may_replace_unreported_evidence_with_defaults": false,
+    "user_data_upload_or_persistence": false,
+    "evidence_locations": ["apps/design_planner/APP_GOVERNANCE.md", "README.md", "manuscript/track1_ssla_methods_forum_draft.md", "manuscript/supplement/supp_s0_map.md"]
+  },
+  "architecture": {
+    "ui_server_layer": "apps/design_planner/app.R",
+    "computation_module": "apps/design_planner/planner_functions.R",
+    "static_public_frontend": "apps/design_planner_web",
+    "synchronous_R_API": "not_implemented_and_not_a_public_dependency",
+    "long_running_work": "offline only; never blocks a page request"
+  },
+  "discovered_contract": {
+    "declared_input_count": 45,
+    "referenced_input_count": 45,
+    "assigned_output_count": 17,
+    "declared_inputs": ["t1_highload", "t1_k", "t1_pbar", "t1_rbar", "t2_item_slope_sd", "t2_k", "t2_memory_adjusted", "t2_memory_mod", "t2_n", "t2_person_slope_sd", "t2_preset", "t3_07_k", "t3_07_model", "t3_07_n", "t3_07_scenario", "t3_19_n", "t3_19_scenario", "t3_19_scoring", "t3_family", "t3_preset_typical", "t4_copy", "t4_delta", "t4_item_slope_sd", "t4_k", "t4_n", "t4_nrep", "t4_person_slope_sd", "t4_preset", "t4_scoring", "t4_seed", "t5_alpha", "t5_analysis_model", "t5_baseline_status", "t5_claim", "t5_coeff_status", "t5_control_design", "t5_counterbalance_status", "t5_denominator_policy", "t5_descriptive_status", "t5_hand_scored", "t5_high_load", "t5_k", "t5_pbar", "t5_repeated_status", "t5_scoring_rule"],
+    "assigned_outputs": ["t1_alpha_curve_plot", "t1_alpha_display", "t1_flags", "t1_reference_table", "t2_bottleneck_display", "t2_curve_plot", "t2_sd_display", "t3_calibration_table", "t3_mode_note", "t3_power_display", "t3_singular_note", "t4_download", "t4_script_out", "t5_decision_table", "t5_download_decision", "t5_overall", "t5_rbar"],
+    "app_top_level_functions": ["details_panel", "does_not_license_note", "server", "start_here_note"],
+    "computation_functions": [".pd_data_dir", ".pd_loglog_interp", ".pd_report_status", ".pd_this_dir", "alpha_curve", "alpha_expectation_flags", "calibration_report", "effect_bottleneck", "effect_generalizability_curve", "effect_sampling_sd", "expected_alpha", "generate_simulation_script", "implied_rbar_from_alpha", "load_effect_scenario_specs", "load_sim07_grid", "load_sim19_grid", "lookup_sim07_detection", "pd_round_half_up", "predict_sim19_detection", "reliability_decision_aid", "wald_power"]
+  },
+  "features": [
+    {
+      "id": "alpha_expectations",
+      "tab": 1,
+      "target": "person-score reliability",
+      "computation": ["expected_alpha", "alpha_expectation_flags", "alpha_curve"],
+      "public_static_coverage": "implemented_with_shared_R_JavaScript_golden_fixtures",
+      "inputs": ["t1_highload", "t1_k", "t1_pbar", "t1_rbar"],
+      "outputs": ["t1_alpha_curve_plot", "t1_alpha_display", "t1_flags", "t1_reference_table"]
+    },
+    {
+      "id": "effect_generalizability",
+      "tab": 2,
+      "target": "generalization beyond sampled participants and items",
+      "computation": ["effect_sampling_sd", "effect_bottleneck", "effect_generalizability_curve"],
+      "public_static_coverage": "implemented_only_for_strict_two_facet_shape_after_design_audit",
+      "inputs": ["t2_item_slope_sd", "t2_k", "t2_memory_adjusted", "t2_memory_mod", "t2_n", "t2_person_slope_sd", "t2_preset"],
+      "outputs": ["t2_bottleneck_display", "t2_curve_plot", "t2_sd_display"]
+    },
+    {
+      "id": "glmm_detection_reference",
+      "tab": 3,
+      "target": "condition-effect detection and boundary-fit reference",
+      "computation": ["predict_sim19_detection", "lookup_sim07_detection", "calibration_report"],
+      "public_static_coverage": "implemented_as_exact_only_70_row_published_snapshot",
+      "inputs": ["t3_07_k", "t3_07_model", "t3_07_n", "t3_07_scenario", "t3_19_n", "t3_19_scenario", "t3_19_scoring", "t3_family", "t3_preset_typical"],
+      "outputs": ["t3_calibration_table", "t3_mode_note", "t3_power_display", "t3_singular_note"]
+    },
+    {
+      "id": "reliability_decision_aid",
+      "tab": 4,
+      "target": "claim-evidence alignment without automatic pass/fail scoring",
+      "computation": ["reliability_decision_aid", "implied_rbar_from_alpha"],
+      "public_static_coverage": "implemented_as_reasoned_four_target_routing_and_reporting_prompts",
+      "inputs": ["t5_alpha", "t5_analysis_model", "t5_baseline_status", "t5_claim", "t5_coeff_status", "t5_control_design", "t5_counterbalance_status", "t5_denominator_policy", "t5_descriptive_status", "t5_hand_scored", "t5_high_load", "t5_k", "t5_pbar", "t5_repeated_status", "t5_scoring_rule"],
+      "outputs": ["t5_decision_table", "t5_download_decision", "t5_overall", "t5_rbar"]
+    },
+    {
+      "id": "simulation_script_generator",
+      "tab": 5,
+      "target": "offline sensitivity analysis for a typed two-condition design",
+      "computation": "generate_simulation_script",
+      "public_static_coverage": "not_executed_in_browser_or_synchronous_request",
+      "inputs": ["t4_copy", "t4_delta", "t4_item_slope_sd", "t4_k", "t4_n", "t4_nrep", "t4_person_slope_sd", "t4_preset", "t4_scoring", "t4_seed"],
+      "outputs": ["t4_download", "t4_script_out"]
+    }
+  ],
+  "reactive_graph": [
+    {
+      "id": "t1_flags",
+      "kind": "reactive",
+      "reads_inputs": ["t1_highload", "t1_k", "t1_pbar", "t1_rbar"],
+      "writes_inputs": [],
+      "feeds_outputs": ["t1_alpha_curve_plot", "t1_alpha_display", "t1_flags"],
+      "computation": "alpha_expectation_flags"
+    },
+    {
+      "id": "t1_alpha_curve",
+      "kind": "render",
+      "reads_inputs": ["t1_k", "t1_rbar"],
+      "writes_inputs": [],
+      "feeds_outputs": "t1_alpha_curve_plot",
+      "computation": "alpha_curve"
+    },
+    {
+      "id": "t2_preset",
+      "kind": "observer",
+      "reads_inputs": "t2_preset",
+      "writes_inputs": ["t2_item_slope_sd", "t2_memory_mod", "t2_person_slope_sd"],
+      "feeds_outputs": [],
+      "computation": "load_effect_scenario_specs"
+    },
+    {
+      "id": "t2_sd",
+      "kind": "reactive",
+      "reads_inputs": ["t2_item_slope_sd", "t2_k", "t2_memory_adjusted", "t2_memory_mod", "t2_n", "t2_person_slope_sd"],
+      "writes_inputs": [],
+      "feeds_outputs": "t2_sd_display",
+      "computation": "effect_sampling_sd"
+    },
+    {
+      "id": "t2_bottleneck",
+      "kind": "render",
+      "reads_inputs": ["t2_item_slope_sd", "t2_k", "t2_memory_adjusted", "t2_memory_mod", "t2_n", "t2_person_slope_sd"],
+      "writes_inputs": [],
+      "feeds_outputs": "t2_bottleneck_display",
+      "computation": "effect_bottleneck"
+    },
+    {
+      "id": "t2_curve",
+      "kind": "render",
+      "reads_inputs": ["t2_item_slope_sd", "t2_memory_adjusted", "t2_memory_mod", "t2_n", "t2_person_slope_sd"],
+      "writes_inputs": [],
+      "feeds_outputs": "t2_curve_plot",
+      "computation": "effect_generalizability_curve"
+    },
+    {
+      "id": "t3_typical_preset",
+      "kind": "observer",
+      "reads_inputs": "t3_preset_typical",
+      "writes_inputs": ["t3_19_n", "t3_19_scenario", "t3_19_scoring", "t3_family"],
+      "feeds_outputs": [],
+      "computation": "Shiny input updates only"
+    },
+    {
+      "id": "t3_result",
+      "kind": "reactive",
+      "reads_inputs": ["t3_07_k", "t3_07_model", "t3_07_n", "t3_07_scenario", "t3_19_n", "t3_19_scenario", "t3_19_scoring", "t3_family"],
+      "writes_inputs": [],
+      "feeds_outputs": ["t3_mode_note", "t3_power_display", "t3_singular_note"],
+      "computation": ["predict_sim19_detection", "lookup_sim07_detection"]
+    },
+    {
+      "id": "t3_calibration",
+      "kind": "render",
+      "reads_inputs": [],
+      "writes_inputs": [],
+      "feeds_outputs": "t3_calibration_table",
+      "computation": "calibration_report"
+    },
+    {
+      "id": "t5_decision",
+      "kind": "reactive",
+      "reads_inputs": ["t5_alpha", "t5_analysis_model", "t5_baseline_status", "t5_claim", "t5_coeff_status", "t5_control_design", "t5_counterbalance_status", "t5_denominator_policy", "t5_descriptive_status", "t5_hand_scored", "t5_high_load", "t5_k", "t5_pbar", "t5_repeated_status", "t5_scoring_rule"],
+      "writes_inputs": [],
+      "feeds_outputs": ["t5_decision_table", "t5_download_decision", "t5_overall", "t5_rbar"],
+      "computation": "reliability_decision_aid"
+    },
+    {
+      "id": "t4_preset",
+      "kind": "observer",
+      "reads_inputs": "t4_preset",
+      "writes_inputs": ["t4_delta", "t4_item_slope_sd", "t4_person_slope_sd"],
+      "feeds_outputs": [],
+      "computation": "load_effect_scenario_specs"
+    },
+    {
+      "id": "t4_script",
+      "kind": "reactive",
+      "reads_inputs": ["t4_delta", "t4_item_slope_sd", "t4_k", "t4_n", "t4_nrep", "t4_person_slope_sd", "t4_scoring", "t4_seed"],
+      "writes_inputs": [],
+      "feeds_outputs": ["t4_download", "t4_script_out"],
+      "computation": "generate_simulation_script"
+    },
+    {
+      "id": "t4_copy",
+      "kind": "observer",
+      "reads_inputs": "t4_copy",
+      "writes_inputs": [],
+      "feeds_outputs": [],
+      "computation": "send pd_copy_script client message"
+    }
+  ],
+  "computation_function_classes": {
+    "environment_path_helpers": [".pd_data_dir", ".pd_this_dir"],
+    "pure_closed_form_or_decision": [".pd_loglog_interp", ".pd_report_status", "alpha_curve", "alpha_expectation_flags", "effect_bottleneck", "effect_generalizability_curve", "effect_sampling_sd", "expected_alpha", "implied_rbar_from_alpha", "pd_round_half_up", "reliability_decision_aid", "wald_power"],
+    "read_only_bundled_snapshot_loaders": ["load_effect_scenario_specs", "load_sim07_grid", "load_sim19_grid"],
+    "deterministic_grid_evaluation_with_optional_snapshot_io": ["calibration_report", "lookup_sim07_detection", "predict_sim19_detection"],
+    "pure_offline_script_generator": "generate_simulation_script"
+  },
+  "dependencies": {
+    "local_Shiny_runtime": {
+      "required": ["shiny", "ggplot2"],
+      "network_after_install": false
+    },
+    "generated_offline_script": {
+      "required": ["dplyr", "tidyr", "purrr", "tibble", "lme4 >= 2.0-6"],
+      "version_record_required": ["R", "lme4", "Matrix", "reformulas"]
+    },
+    "deterministic_build_and_test": {
+      "R": ["jsonlite", "tibble", "lme4 and generated-script dependencies for full suite"],
+      "JavaScript": ["Node.js", "jsdom", "Wrangler build tooling"]
+    }
+  },
+  "bundled_data": [
+    {
+      "file": "claim_math_fixtures.json",
+      "bytes": 2265,
+      "md5": "9644f00612559e8f01bb2d18533103b4",
+      "schema_version": "1.0.0"
+    },
+    {
+      "file": "decision_rules.json",
+      "bytes": 7719,
+      "md5": "4444e667e9e92f99291dd8657033c583",
+      "schema_version": "1.0.0"
+    },
+    {
+      "file": "design_audit_fixtures.json",
+      "bytes": 8060,
+      "md5": "bb997bc3c6d3caea434ea6627dc0a44f",
+      "schema_version": "1.0.0"
+    },
+    {
+      "file": "design_audit.schema.json",
+      "bytes": 2537,
+      "md5": "a05fa89936d1f876bada76fa3845897e",
+      "schema_version": null
+    },
+    {
+      "file": "effect_scenario_specs.csv",
+      "bytes": 1202,
+      "md5": "45e6f1861c984bc0101acacfa8c8a5a2",
+      "rows": 5,
+      "columns": 12
+    },
+    {
+      "file": "golden_test_fixtures.json",
+      "bytes": 6681,
+      "md5": "00f4db9b844141e33ebc12923f64ca34",
+      "schema_version": "1.0.0"
+    },
+    {
+      "file": "inferential_target_registry.json",
+      "bytes": 6508,
+      "md5": "0075e0044ca4c4f782303374fa39d706",
+      "schema_version": "1.0.0"
+    },
+    {
+      "file": "reference_grids.json",
+      "bytes": 40794,
+      "md5": "c82d7445d7f2525131335b4d8462cc0e",
+      "schema_version": "1.0.0"
+    },
+    {
+      "file": "sim07_grid.csv",
+      "bytes": 6028,
+      "md5": "131212b08367cd99bd564d92ce9f51aa",
+      "rows": 40,
+      "columns": 12
+    },
+    {
+      "file": "sim19_grid.csv",
+      "bytes": 6657,
+      "md5": "4234715a31abc4da72da0084a3b29c6d",
+      "rows": 30,
+      "columns": 14
+    },
+    {
+      "file": "validation_registry.json",
+      "bytes": 295,
+      "md5": "de57b708321d61580216eca5adc98c32",
+      "schema_version": "1.0.0"
+    }
+  ],
+  "source_files": [
+    {
+      "file": "app.R",
+      "bytes": 48172,
+      "md5": "15b1368a34807689631750666cf06c86"
+    },
+    {
+      "file": "planner_functions.R",
+      "bytes": 58262,
+      "md5": "c49bbbf440efdee7dcd7d3385ce2ae7b"
+    },
+    {
+      "file": "run_local.R",
+      "bytes": 1067,
+      "md5": "9ca0217466d5fd9bd517d095a0b520a3"
+    },
+    {
+      "file": "test_planner_functions.R",
+      "bytes": 33798,
+      "md5": "761fd75fae552912ab8c56ee97044039"
+    }
+  ],
+  "validation": {
+    "deterministic_inventory_command": "Rscript --vanilla apps/design_planner/build_app_inventory.R",
+    "regeneration_command": "Rscript --vanilla apps/design_planner/build_app_inventory.R --write",
+    "runtime_probe_command": "Rscript --vanilla apps/design_planner/probe_app_runtime.R",
+    "runtime_probe_interpretation": "machine-specific source/bootstrap diagnostic, not a hosted HTTP cold-start SLA",
+    "strict_startup_or_memory_threshold": false,
+    "full_suite_command": "node scripts/run_design_planner_checks.mjs"
+  },
+  "lifecycle": {
+    "source_of_truth": "versioned R functions plus deterministic artifacts and tests",
+    "static_first": true,
+    "backend_loss_behavior": "the versioned public static snapshot remains usable",
+    "new_feature_gate": "must trace to a reviewer comment, manuscript claim gap, or reproducibility obligation",
+    "R_API_trigger": "only a bounded deterministic R calculation that cannot reasonably be ported or precomputed and has a specified deadline and static fallback",
+    "current_R_API_trigger_satisfied": false,
+    "retirement_rule": "archive the static snapshot and provenance; do not keep a backend merely because it once existed"
+  }
+}

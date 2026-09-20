@@ -1,0 +1,106 @@
+{
+  "schema_version": "1.0.0",
+  "source": "Main-text Figure 1 and Supplementary Material S2.2",
+  "branches": [
+    {
+      "id": "person_score",
+      "number": 1,
+      "question": "Who scored higher?",
+      "label": "Person-level score",
+      "inferential_target": "Score reliability for individual differences",
+      "aligned_evidence": [
+        "Alpha/KR-20 attached to one exact score unit: time point, condition, subtest, item set, denominator, and scoring rule",
+        "Score distribution, floor and ceiling rates, zero-variance item count, and SEM",
+        "Item-deletion rule and item count before and after deletion, when applicable"
+      ],
+      "minimum_reporting": [
+        "Define the exact score unit and eligible denominator before naming a coefficient.",
+        "Report the coefficient with item count, mean, SD, SEM, floor/ceiling rates, and zero-variance items.",
+        "Keep coefficients separate when time point, condition, subtest, item set, or scoring rule changes."
+      ],
+      "does_not_license": [
+        "A causal condition effect",
+        "Generalization beyond the sampled words or learners",
+        "Validity of the task, distractors, scoring rule, or testing schedule"
+      ],
+      "reporting_starter": "For the exact [time × condition × subtest × item set × scoring rule] score, report alpha/KR-20, k, M, SD, SEM, floor/ceiling rates, zero-variance items, the eligible denominator, and any item-deletion rule. Interpret the coefficient only as evidence about learner ranking for that defined score.",
+      "requires_design_audit": false,
+      "tool": "alpha_expectation"
+    },
+    {
+      "id": "condition_effect",
+      "number": 2,
+      "question": "Which condition worked?",
+      "label": "Condition effect",
+      "inferential_target": "Treatment-effect estimation",
+      "aligned_evidence": [
+        "Item-level GLMM or explanatory IRT with the prespecified condition contrast",
+        "Fixed effect or contrast with uncertainty, participant/item variance terms, and convergence or boundary diagnostics",
+        "Word-condition assignment or counterbalancing and, for between-group designs, baseline equivalence or adjustment"
+      ],
+      "minimum_reporting": [
+        "State assignment, sampling, observation, and analysis units separately.",
+        "Report the model formula, contrast coding, effect estimate, SE or interval, variance components, and diagnostics.",
+        "Report response-scale descriptives without substituting them for model-based uncertainty."
+      ],
+      "does_not_license": [
+        "Repair of confounding by a high alpha/KR-20 value",
+        "Automatic generalization to new words, learners, classes, schools, or prefectures",
+        "A claim that unsupported random slopes or dependence structures were estimated"
+      ],
+      "reporting_starter": "Report the condition contrast from an item-level model, its uncertainty, the participant/item terms, coding, convergence and singularity diagnostics, and the assignment/counterbalancing evidence. Treat score alpha/KR-20 as auxiliary rather than as evidence for the treatment effect.",
+      "requires_design_audit": true,
+      "tool": "design_audit"
+    },
+    {
+      "id": "effect_generalizability",
+      "number": 3,
+      "question": "Would it hold for other words or learners?",
+      "label": "Effect generalizability",
+      "inferential_target": "Stability of the effect beyond sampled words or learners",
+      "aligned_evidence": [
+        "Item-by-condition and, where relevant, learner-by-condition variability",
+        "Resampling over the population to which the claim extends",
+        "A G-study/D-study-style projection that keeps tested items, learned words, exposure time, and item count distinct"
+      ],
+      "minimum_reporting": [
+        "Name every population over which the effect is intended to generalize.",
+        "Report the corresponding random-slope SD, resampling result, or design-projection inputs and uncertainty.",
+        "Narrow the claim when the design or fitted model omits a required generalization facet."
+      ],
+      "does_not_license": [
+        "Item-sample generalizability from alpha/KR-20 at any value",
+        "A universal effect from one sampled word list or one assigned class",
+        "Power, coverage, or exact future-study performance from an analytic sensitivity projection"
+      ],
+      "reporting_starter": "State whether the effect is intended to generalize over learners, words, or both; report the corresponding condition-slope variability, resampling, or D-study-style projection. Keep tested items, learned words, exposure time, and item count distinct, and narrow any population claim not supported by the design.",
+      "requires_design_audit": true,
+      "tool": "effect_projection"
+    },
+    {
+      "id": "construct_scoring",
+      "number": 4,
+      "question": "What counted as knowledge?",
+      "label": "Design / scoring",
+      "inferential_target": "Design, construct, and scoring-rule interpretation",
+      "aligned_evidence": [
+        "Task and scoring rationale tied to strict, lenient, partial-credit, recognition, or composite responses",
+        "Format-specific evidence such as distractor quality, guessing, scorer training, or adjudication",
+        "No-test, delayed-only, parallel-form, test-only, or control-item evidence when repeated testing is part of the claim"
+      ],
+      "minimum_reporting": [
+        "State what response earns each score and why that response represents the intended knowledge state.",
+        "Report denominator, exclusions, filler/control-item handling, and format-specific diagnostics.",
+        "For delayed-retention claims, describe the testing schedule and evidence separating retention from test-induced learning."
+      ],
+      "does_not_license": [
+        "Construct validity from a high alpha/KR-20 value",
+        "Equivalence of strict, lenient, partial-credit, and recognition scores",
+        "A delayed-retention interpretation when repeated testing is uncontrolled or unreported"
+      ],
+      "reporting_starter": "Define the response and scoring criteria, eligible denominator, exclusions, and treatment of filler/control items. Add format-specific diagnostics and, when retention is claimed, describe the testing schedule and controls that separate intervention effects from repeated-test exposure.",
+      "requires_design_audit": false,
+      "tool": "reporting_checklist"
+    }
+  ]
+}

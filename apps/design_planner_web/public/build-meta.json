@@ -1,0 +1,27 @@
+{
+  "build_contract_version": "1.3.0",
+  "design_audit_schema_version": "1.0.0",
+  "claim_router_schema_version": "1.0.0",
+  "claim_math_schema_version": "1.0.0",
+  "reference_grid_schema_version": "1.0.0",
+  "decision_rules_schema_version": "1.0.0",
+  "golden_fixtures_schema_version": "1.0.0",
+  "validation_registry_version": "2026-08-30.1",
+  "sha256": {
+    "index.html": "0c980366c3a8338bf0727ffdafff4807cf467b7c5535392af134e8e67ba57e42",
+    "styles.css": "a07216b5547e1cadb0ff3554414b7620d167055634b0edf021c77d90b24a6681",
+    "app.js": "8e8e62f0b90e31f4c8a7a091975b4696751956bce57221f174d4401569860269",
+    "design_audit.js": "ab6c932ff10dc6a3b9ee46570b636713f67b5d84491fc0ef95fa302e700a6bf9",
+    "claim_math.js": "0cd28a01db5b04b3c3c6c83a417977ec2334e4823f8b63d629b3f8197ef92233",
+    "design_audit.schema.json": "0100e10894ba075e6f2c42a49ba22139e82c17903f7c7730bb2d521d222306b0",
+    "design_audit_fixtures.json": "32b81053483ef7936f61a8495abc1253060700d23418094a5d4917c059b0c07b",
+    "validation_registry.json": "a0d5429909ab29a6fe5193b1c55cfb8a5e17a01c145fd52e0f41944a38fa4bf4",
+    "inferential_target_registry.json": "d27eaec666a20fa2cf3e7630beb8917b11ca430f93641e1b60f815b5950a07ea",
+    "claim_math_fixtures.json": "b0a39088c0ec2209630c7e88272d1b4903bbc45583901b639763f1d52d8e8bc1",
+    "reference_grids.json": "be55fe3bef45385e3f8708aad3768e62ce1d75d30c037bd39502b75de56be9aa",
+    "decision_rules.json": "7949b01cc64dec3e7cd33d61991853003dd1df41c0b0519a9df28040fc96a5e0",
+    "golden_test_fixtures.json": "cb9ab9340f17db42f648a3920ac59b60713f54005b9158a7976201ae55b8bad8",
+    "audit_data.js": "bb53d91c214f00d4cf6a8d12574f9047d10e35fb6189653605674f39254a352d",
+    "claim_data.js": "aefe802388f12cc28ddecc1a7ac38570bf1e76c87cf626ae5d02f959984df328"
+  }
+}

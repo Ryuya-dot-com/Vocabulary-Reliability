@@ -1,0 +1,7 @@
+{
+  "schema_version": "1.0.0",
+  "registry_version": "2026-08-30.1",
+  "validated_envelopes": [],
+  "note": "Empty by design. Add an ID only after the full design and parameter envelope has passed bias, coverage, Type I error, power, estimability, singularity, convergence, and MCSE review."
+}
+

@@ -1,0 +1,22 @@
+{
+  "name": "reliability-design",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node build.mjs",
+    "test": "node test.mjs",
+    "test:stress": "npm run build && node stress.mjs",
+    "check:anonymity": "node check_anonymous_release.mjs",
+    "check:cloudflare-account": "node check_cloudflare_account.mjs",
+    "check": "npm run build && npm test && npm run check:anonymity",
+    "check:quick": "node ../../scripts/run_design_planner_checks.mjs --quick",
+    "check:all": "node ../../scripts/run_design_planner_checks.mjs",
+    "dev": "npm run build && wrangler dev",
+    "deploy": "npm run check && wrangler deploy --dry-run"
+  },
+  "devDependencies": {
+    "jsdom": "^29.1.1",
+    "wrangler": "^4.127.1"
+  }
+}

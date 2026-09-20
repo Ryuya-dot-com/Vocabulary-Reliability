@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/vocab-reliability/design-audit.schema.json",
+  "title": "Vocabulary reliability design-audit payload",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "units", "assignment", "facets"],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "validation_id": {"type": "string", "minLength": 1},
+    "units": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["assignment", "sampling", "observation", "analysis"],
+      "properties": {
+        "assignment": {"$ref": "#/$defs/facetIdArray"},
+        "sampling": {"$ref": "#/$defs/facetIdArray"},
+        "observation": {"type": "string", "minLength": 1},
+        "analysis": {"type": "string", "minLength": 1}
+      }
+    },
+    "assignment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mode", "condition_levels", "independent_units_per_condition"],
+      "properties": {
+        "mode": {
+          "enum": ["within_unit", "between_unit", "crossed_counterbalance"]
+        },
+        "condition_levels": {"type": "integer", "minimum": 2},
+        "independent_units_per_condition": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"type": "integer", "minimum": 1}
+        }
+      }
+    },
+    "facets": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/facet"}
+    }
+  },
+  "$defs": {
+    "facetIdArray": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "facet": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id", "parent", "n_levels", "condition_varies_within",
+        "generalization_target", "model_role", "dependence", "slope"
+      ],
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "parent": {"type": ["string", "null"]},
+        "n_levels": {"type": "integer", "minimum": 2},
+        "condition_varies_within": {"type": "boolean"},
+        "generalization_target": {"type": "boolean"},
+        "model_role": {"enum": ["random", "fixed", "omitted"]},
+        "dependence": {
+          "enum": [
+            "iid", "diag", "us", "cs", "ar1", "spatial",
+            "multiple_membership", "custom_residual",
+            "informative_cluster_size"
+          ]
+        },
+        "slope": {"enum": ["none", "diag", "us", "cs", "ar1"]}
+      }
+    }
+  }
+}

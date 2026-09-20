@@ -1,0 +1,6 @@
+"scenario","scenario_label","base","guessing","person_intercept_sd","memory_score_slope","item_intercept_sd","delta","person_slope_sd","item_slope_sd","memory_moderation","interpretation"
+"alpha_high_effect_stable","High alpha, stable effect",-0.4,0,0.85,0.35,0.55,0.75,0.05,0.05,0,"Alpha and effect model agree; low item/person treatment heterogeneity."
+"alpha_high_item_sensitive","High alpha, item-sensitive effect",-0.4,0,0.85,0.35,0.55,0.75,0.05,0.65,0,"Alpha can be high while the treatment effect depends strongly on which words were sampled."
+"alpha_high_person_sensitive","High alpha, person-sensitive effect",-0.4,0,0.85,0.35,0.55,0.75,0.65,0.05,0,"Alpha can be high while the treatment effect varies across learners."
+"recognition_alpha_low_effect_stable","Low-alpha recognition, stable effect",1,0.25,0.25,0.15,0.25,0.55,0.05,0.05,0,"Recognition can have low alpha because of ceiling/guessing, while a uniform condition effect is still estimable."
+"high_load_memory_moderated","High load, memory-moderated effect",-1.1,0,0.65,0.8,0.55,0.55,0.2,0.15,0.65,"High-load learning can yield high alpha because memory aptitude dominates; condition effects should be tested with memory moderation."

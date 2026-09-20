@@ -1,0 +1,178 @@
+{
+  "schema_version": "1.0.0",
+  "fixtures": [
+    {
+      "id": "hierarchical_crossed_validated",
+      "validated_ids": ["multi_facet_v1"],
+      "expected_state": "Within validated envelope",
+      "expected_codes": [],
+      "design": {
+        "schema_version": "1.0.0",
+        "validation_id": "multi_facet_v1",
+        "units": {
+          "assignment": ["participant", "item"],
+          "sampling": ["participant", "item", "class", "school", "prefecture"],
+          "observation": "participant_item_response",
+          "analysis": "participant_item_response"
+        },
+        "assignment": {
+          "mode": "crossed_counterbalance",
+          "condition_levels": 2,
+          "independent_units_per_condition": [20, 20]
+        },
+        "facets": [
+          {"id": "prefecture", "parent": null, "n_levels": 6, "condition_varies_within": true, "generalization_target": true, "model_role": "random", "dependence": "iid", "slope": "diag"},
+          {"id": "school", "parent": "prefecture", "n_levels": 24, "condition_varies_within": true, "generalization_target": true, "model_role": "random", "dependence": "iid", "slope": "diag"},
+          {"id": "class", "parent": "school", "n_levels": 60, "condition_varies_within": true, "generalization_target": true, "model_role": "random", "dependence": "iid", "slope": "diag"},
+          {"id": "participant", "parent": "class", "n_levels": 600, "condition_varies_within": true, "generalization_target": true, "model_role": "random", "dependence": "iid", "slope": "diag"},
+          {"id": "item", "parent": null, "n_levels": 40, "condition_varies_within": true, "generalization_target": true, "model_role": "random", "dependence": "iid", "slope": "diag"}
+        ]
+      }
+    },
+    {
+      "id": "one_class_per_condition",
+      "validated_ids": [],
+      "expected_state": "Not identifiable",
+      "expected_codes": ["assignment_not_replicated"],
+      "design": {
+        "schema_version": "1.0.0",
+        "units": {
+          "assignment": ["class"],
+          "sampling": ["class", "participant"],
+          "observation": "participant_response",
+          "analysis": "participant_response"
+        },
+        "assignment": {
+          "mode": "between_unit",
+          "condition_levels": 2,
+          "independent_units_per_condition": [1, 1]
+        },
+        "facets": [
+          {"id": "class", "parent": null, "n_levels": 2, "condition_varies_within": false, "generalization_target": false, "model_role": "fixed", "dependence": "iid", "slope": "none"},
+          {"id": "participant", "parent": "class", "n_levels": 60, "condition_varies_within": false, "generalization_target": true, "model_role": "random", "dependence": "iid", "slope": "none"}
+        ]
+      }
+    },
+    {
+      "id": "two_facet_counterbalanced",
+      "validated_ids": [],
+      "expected_state": "Estimable but fragile",
+      "expected_codes": [],
+      "design": {
+        "schema_version": "1.0.0",
+        "units": {
+          "assignment": ["participant", "item"],
+          "sampling": ["participant", "item"],
+          "observation": "participant_item_response",
+          "analysis": "participant_item_response"
+        },
+        "assignment": {
+          "mode": "crossed_counterbalance",
+          "condition_levels": 2,
+          "independent_units_per_condition": [15, 15]
+        },
+        "facets": [
+          {"id": "participant", "parent": null, "n_levels": 120, "condition_varies_within": true, "generalization_target": true, "model_role": "random", "dependence": "iid", "slope": "diag"},
+          {"id": "item", "parent": null, "n_levels": 30, "condition_varies_within": true, "generalization_target": true, "model_role": "random", "dependence": "iid", "slope": "diag"}
+        ]
+      }
+    },
+    {
+      "id": "spatial_prefecture",
+      "validated_ids": [],
+      "expected_state": "Outside supported model class",
+      "expected_codes": ["unsupported_spatial"],
+      "design": {
+        "schema_version": "1.0.0",
+        "units": {
+          "assignment": ["participant"],
+          "sampling": ["participant", "prefecture"],
+          "observation": "participant_response",
+          "analysis": "participant_response"
+        },
+        "assignment": {
+          "mode": "within_unit",
+          "condition_levels": 2,
+          "independent_units_per_condition": [100]
+        },
+        "facets": [
+          {"id": "prefecture", "parent": null, "n_levels": 47, "condition_varies_within": true, "generalization_target": true, "model_role": "random", "dependence": "spatial", "slope": "diag"},
+          {"id": "participant", "parent": "prefecture", "n_levels": 1000, "condition_varies_within": true, "generalization_target": true, "model_role": "random", "dependence": "iid", "slope": "diag"}
+        ]
+      }
+    },
+    {
+      "id": "slope_without_within_facet_variation",
+      "validated_ids": [],
+      "expected_state": "Not identifiable",
+      "expected_codes": ["slope_not_estimable"],
+      "design": {
+        "schema_version": "1.0.0",
+        "units": {
+          "assignment": ["class"],
+          "sampling": ["class", "participant"],
+          "observation": "participant_response",
+          "analysis": "participant_response"
+        },
+        "assignment": {
+          "mode": "between_unit",
+          "condition_levels": 2,
+          "independent_units_per_condition": [6, 6]
+        },
+        "facets": [
+          {"id": "class", "parent": null, "n_levels": 12, "condition_varies_within": false, "generalization_target": true, "model_role": "random", "dependence": "iid", "slope": "diag"},
+          {"id": "participant", "parent": "class", "n_levels": 240, "condition_varies_within": false, "generalization_target": true, "model_role": "random", "dependence": "iid", "slope": "none"}
+        ]
+      }
+    },
+    {
+      "id": "omitted_item_slope",
+      "validated_ids": [],
+      "expected_state": "Estimable but fragile",
+      "expected_codes": ["missing_random_slope"],
+      "design": {
+        "schema_version": "1.0.0",
+        "units": {
+          "assignment": ["participant", "item"],
+          "sampling": ["participant", "item"],
+          "observation": "participant_item_response",
+          "analysis": "participant_item_response"
+        },
+        "assignment": {
+          "mode": "crossed_counterbalance",
+          "condition_levels": 2,
+          "independent_units_per_condition": [15, 15]
+        },
+        "facets": [
+          {"id": "participant", "parent": null, "n_levels": 120, "condition_varies_within": true, "generalization_target": true, "model_role": "random", "dependence": "iid", "slope": "diag"},
+          {"id": "item", "parent": null, "n_levels": 30, "condition_varies_within": true, "generalization_target": true, "model_role": "random", "dependence": "iid", "slope": "none"}
+        ]
+      }
+    },
+    {
+      "id": "cyclic_hierarchy",
+      "validated_ids": [],
+      "expected_state": "Not identifiable",
+      "expected_codes": ["parent_cycle"],
+      "design": {
+        "schema_version": "1.0.0",
+        "units": {
+          "assignment": ["participant"],
+          "sampling": ["participant", "class", "school"],
+          "observation": "participant_response",
+          "analysis": "participant_response"
+        },
+        "assignment": {
+          "mode": "within_unit",
+          "condition_levels": 2,
+          "independent_units_per_condition": [30]
+        },
+        "facets": [
+          {"id": "school", "parent": "class", "n_levels": 10, "condition_varies_within": true, "generalization_target": true, "model_role": "random", "dependence": "iid", "slope": "diag"},
+          {"id": "class", "parent": "school", "n_levels": 30, "condition_varies_within": true, "generalization_target": true, "model_role": "random", "dependence": "iid", "slope": "diag"},
+          {"id": "participant", "parent": "class", "n_levels": 300, "condition_varies_within": true, "generalization_target": true, "model_role": "random", "dependence": "iid", "slope": "diag"}
+        ]
+      }
+    }
+  ]
+}
