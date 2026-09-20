@@ -157,6 +157,29 @@ denominators against a hand-constructed ledger. Structural facet edits preserve
 fixed predictors and their simulation assumptions; loading an example clears
 predictors, and restarting the guide resets simulation settings as well.
 
+## Review simulation results locally
+
+Open **Review an R simulation result** and select `summary.csv` from a completed
+run. The viewer reads one summary on the device using the browser File API;
+`connect-src 'none'` remains enforced and file contents are not uploaded or stored.
+It first shows usable, nonconverged, failed, invalid and singular counts, then
+rejection and coefficient-interval coverage with denominators, Wilson intervals
+and Monte Carlo SEs. A checkbox restricts the rejection panel to usable nonsingular
+fits. Coverage remains based on all usable fits, and missing-result bounds always
+use all requested replications, including usable singular fits.
+
+The current planner inputs do not alter an imported result. New exports record
+`alpha`; older summaries remain readable with an explicit missing-alpha message.
+The full design is not reconstructed from a summary: retain `assumptions.R`,
+`README.txt`, `session-info.txt` and `replications.csv` for interpretation and
+individual-fit diagnostics. The viewer accepts only one summary row up to 64 KB
+with consistent counts, rates, Wilson intervals, MCSEs and missing-result bounds.
+It does not accept combined runs, replication ledgers or arbitrary CSV datasets.
+
+`npm test` includes malformed-file, all-failed, legacy-export, subset-toggle and
+asynchronous file-selection tests. `node test.mjs --check-r` also imports actual
+R-generated summaries from numeric, categorical and failure-only test runs.
+
 ## Learners-or-words planning workflow
 
 Choose **Explore the two-condition example** to load a counterbalanced

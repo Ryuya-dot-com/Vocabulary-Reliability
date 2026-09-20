@@ -80,6 +80,7 @@ const artifactNames = [
   "app.js",
   "study_plan.js",
   "simulation_data.js",
+  "simulation_results.js",
   "design_audit.js",
   "claim_math.js",
   "design_audit.schema.json",

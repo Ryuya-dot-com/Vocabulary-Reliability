@@ -179,6 +179,7 @@ dom.window.eval(dataJs);
 dom.window.eval(claimDataJs);
 dom.window.eval(await readText("simulation_data.js"));
 dom.window.eval(await readText("study_plan.js"));
+dom.window.eval(await readText("simulation_results.js"));
 dom.window.eval(appJs);
 
 const domById = id => dom.window.document.getElementById(id);
@@ -920,6 +921,10 @@ cat("Simulation execution, generators, coefficient mapping, exclusions, failures
 `);
     const output = execFileSync("Rscript", ["--vanilla", "check.R"], { cwd: directory, timeout: 120000, encoding: "utf8", stdio: "pipe" });
     assert.match(output, /Monte Carlo summaries OK/);
+    for (const folder of ["base-output", "failed-output", "empty-output", "numeric-output", "factor-output"]) {
+      const parsed = dom.window.SimulationResults.parseSummary(await readFile(path.join(directory, folder, "summary.csv"), "utf8"));
+      assert.equal(parsed.alpha, .05);
+    }
     const cliOutput = execFileSync("Rscript", ["--vanilla", "base.R"], { cwd: directory, timeout: 60000, encoding: "utf8", stdio: "pipe" });
     assert.match(cliOutput, /Power for this coefficient/);
   } finally { await rm(directory, { recursive: true, force: true }); }

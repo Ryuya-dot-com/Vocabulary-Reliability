@@ -11,7 +11,7 @@ const controlFiles = new Set([".assetsignore", "_headers"]);
 const expectedAssets = new Set([
   "app.js",
   "study_plan.js",
-  "simulation_data.js",
+  "simulation_data.js", "simulation_results.js",
   "audit_data.js",
   "build-meta.json",
   "claim_data.js",

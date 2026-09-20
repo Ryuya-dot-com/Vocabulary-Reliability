@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "build": "node build.mjs",
-    "test": "node test.mjs",
+    "test": "node test.mjs && node simulation_results_test.mjs",
     "test:stress": "npm run build && node stress.mjs",
     "check:anonymity": "node check_anonymous_release.mjs",
     "check:cloudflare-account": "node check_cloudflare_account.mjs",

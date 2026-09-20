@@ -1445,3 +1445,18 @@ body[data-mode="guided"] .reporting-starter { margin: 0 clamp(1.25rem, 3.5vw, 2.
 
 .planning-links { display: grid; gap: .6rem; margin-top: .8rem; }
 .planning-links a { display: block; width: fit-content; }
+
+.simulation-rate-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); gap: 1rem; margin: 1rem 0; }
+.simulation-rate { border: 1px solid var(--line); border-radius: 12px; padding: 1rem; background: var(--surface); min-width: 0; }
+.simulation-rate h3 { margin-top: 0; font-size: 1rem; }
+.simulation-rate svg { width: 100%; display: block; overflow: visible; }
+.rate-axis { stroke: var(--line); stroke-width: 2; }
+.rate-interval { stroke: var(--forest); stroke-width: 8; stroke-linecap: round; }
+.rate-point { fill: var(--forest-deep); stroke: white; stroke-width: 1.5; }
+.simulation-rate svg text { fill: var(--muted); font-size: 11px; }
+.simulation-filter { display: flex; align-items: flex-start; gap: .5rem; }
+.simulation-filter input { flex: 0 0 auto; margin-top: .3em; }
+#simulation-results { scroll-margin-top: 1rem; }
+#simulation-results h2 { font-size: 1.15rem; margin-top: 1.5rem; }
+#simulation-summary-file { max-width: 100%; }
+#simulation-report-context, #simulation-import-status { overflow-wrap: anywhere; }

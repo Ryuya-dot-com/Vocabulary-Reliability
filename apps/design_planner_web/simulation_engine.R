@@ -144,7 +144,7 @@ summarize_simulation <- function(results) {
   coverage <- rate_summary(sum(results$covered_95[usable]), nu)
   truth <- unlist(config$beta)[config$test_term]
   estimates <- results$estimate[usable]
-  data.frame(test_term = config$test_term, true_coefficient = truth,
+  data.frame(test_term = config$test_term, true_coefficient = truth, alpha = config$alpha,
     interpretation = if (truth == 0) "Type I error for this coefficient" else "Power for this coefficient",
     requested_reps = n, usable_reps = nu, failed_reps = sum(results$status == "failed"),
     invalid_estimate_reps = sum(results$status == "invalid_estimate"), unusable_reps = n - nu,

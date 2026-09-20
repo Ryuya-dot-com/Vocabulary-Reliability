@@ -7,7 +7,7 @@
   <meta name="robots" content="noindex, nofollow, noarchive">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
   <title>Vocabulary Design Planner</title>
-  <link rel="stylesheet" href="./styles.css?v=ac8adc0e72a1">
+  <link rel="stylesheet" href="./styles.css?v=1ba0d65df487">
 </head>
 <body data-mode="overview">
   <a class="skip-link" href="#planning-entry-title">Skip to planner</a>
@@ -401,6 +401,7 @@
             <label class="field" for="sim-test-term"><span>Coefficient to test</span><select id="sim-test-term"></select><small>The condition main coefficient is evaluated at numeric predictors = 0 and categorical reference levels. It is not a marginal average when interactions are present.</small></label>
             <p id="simulation-status" role="status"></p><ul id="simulation-errors" class="projection-notes"></ul>
             <button id="download-simulation-r" type="button" class="button button-primary" disabled>Download power simulation in R</button>
+            <p>Finished running R? <a href="#simulation-results" id="open-simulation-results">Review your summary.csv here.</a></p>
             <details class="payload-panel"><summary>Preview the simulation program</summary><pre id="simulation-r-code" class="payload-box"></pre></details>
             <p class="tool-caveat">Run the tested coefficient at zero as well to examine Type I error. Results retain every failed, nonconverged and singular fit, report conditional rejection rates with Monte Carlo uncertainty and show bounds for missing results. Successful execution is not statistical validation.</p>
           </details>
@@ -472,6 +473,29 @@
       </aside>
     </div>
     </details>
+    <details id="simulation-results" class="boundary-details">
+      <summary>Review an R simulation result</summary>
+      <p>After running the downloaded R program, choose <code>summary.csv</code> from its output folder. The file is read only on this device. Start with the fit counts, then interpret rejection and coverage; results stay separate from your current planner settings.</p>
+      <label class="field" for="simulation-summary-file"><span>Open summary.csv locally</span><input id="simulation-summary-file" type="file" accept=".csv,text/csv"></label>
+      <p id="simulation-import-status" role="status">No file selected.</p>
+      <button id="clear-simulation-results" type="button" class="button button-quiet">Clear imported results</button>
+      <div id="simulation-report" hidden>
+        <p id="simulation-report-context"></p>
+        <h2>1. Check fit quality</h2>
+        <p id="simulation-report-health"></p>
+        <p id="simulation-report-warning" class="tool-caveat"></p>
+        <h2>2. Read rates with their denominators</h2>
+        <label class="simulation-filter"><input id="simulation-exclude-singular" type="checkbox"> Exclude singular fits from the rejection-rate panel</label>
+        <div id="simulation-report-rates" class="simulation-rate-grid"></div>
+        <h3>Rejection bounds for missing results</h3>
+        <p id="simulation-report-bounds"></p>
+        <details><summary>How to interpret these results</summary>
+          <p>Wilson intervals describe Monte Carlo uncertainty in the displayed rates; they are not intervals for the model coefficient. Coverage measures how often the model's 95% coefficient interval contains the generating coefficient. Monte Carlo SE can be zero when every usable replication has the same outcome; the Wilson interval still reflects finite simulation size.</p>
+          <p>Excluding singular fits changes the subset being summarized. Neither subset corrects bias caused by unsuccessful fits. Inspect individual warnings, estimates, eligibility and feedback scores in <code>replications.csv</code>, and the generating assumptions in <code>assumptions.R</code>. This summary does not identify the full design or model.</p>
+          <p>Run the tested coefficient at zero to examine Type I error under the same nuisance effects. Compare plausible assumptions before making a design decision. Independent known-word screening and feedback-only fillers do not model a motivation effect.</p>
+        </details>
+      </div>
+    </details>
     <details class="boundary-details"><summary>What this planner can and cannot tell you</summary><p>Explore assumptions and identify structural problems. The planner cannot certify a design or replace a fitted analysis. The numerical validation registry is empty; passing a structural check does not establish numerical performance.</p></details>
   </main>
 
@@ -483,8 +507,9 @@
   <script src="./claim_math.js?v=0cd28a01db5b"></script>
   <script src="./audit_data.js?v=bb53d91c214f"></script>
   <script src="./claim_data.js?v=aefe802388f1"></script>
-  <script src="./simulation_data.js?v=fd9e26ba2768"></script>
+  <script src="./simulation_data.js?v=0dbb83e76849"></script>
   <script src="./study_plan.js?v=429287a13b60"></script>
+  <script src="./simulation_results.js?v=e99225f1c28b"></script>
   <script src="./app.js?v=37eec082d679"></script>
 </body>
 </html>
