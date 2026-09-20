@@ -62,10 +62,12 @@ describe external scientific context; those documents are not bundled here.
 
 ## Deployment
 
-The deployable directory is `apps/design_planner_web/public`. See the
+The deployable directory is `apps/design_planner_web/public`. The selected
+publication route is Cloudflare Pages Direct Upload, using a generic
+`<project-name>.pages.dev` hostname. See the
 [deployment instructions](apps/design_planner_web/README.md#deployment-validation)
-for checks and Cloudflare account configuration. `npm run deploy` is deliberately
-a dry run; actual publication uses Wrangler's explicit deploy command.
+for checks and commands. `npm run deploy` is deliberately a Workers dry run;
+actual Pages publication uses Wrangler's explicit `pages deploy` command.
 
 A public GitHub repository under an author's account is not an anonymous review
 channel. The static app's content checks alone cannot make its hosting URL or

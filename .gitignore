@@ -24,6 +24,7 @@ __pycache__/
 node_modules
 
 # Cloudflare local authentication, environment, and build state.
+.wrangler/
 apps/design_planner_web/.wrangler/
 apps/design_planner_web/.dev.vars*
 apps/design_planner_web/.env*

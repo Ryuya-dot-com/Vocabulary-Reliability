@@ -206,6 +206,33 @@ npm run dev
 
 ## Deployment validation
 
+### Cloudflare Pages publication
+
+The publication route selected on 2026-09-20 is Cloudflare Pages Direct Upload.
+Pages uses a project-based `<project-name>.pages.dev` hostname, avoiding the
+identifying account-wide `workers.dev` subdomain. Use a generic project name;
+this does not guarantee anonymity if the same code is publicly attributable
+elsewhere. Do not add author-account or repository links to the served app.
+
+From the repository root, after the checks below pass:
+
+```sh
+npm --prefix apps/design_planner_web run check
+# Create the project once, using a non-identifying name:
+apps/design_planner_web/node_modules/.bin/wrangler pages project create <project-name> --production-branch main
+apps/design_planner_web/node_modules/.bin/wrangler pages deploy apps/design_planner_web/public --project-name <project-name> --branch main
+```
+
+Only `public/` is uploaded; `_headers` applies the app's CSP and indexing/referrer
+policy. After deployment, verify the HTTPS responses and served asset hashes
+against `public/build-meta.json`. Pages may also create deployment-specific
+URLs; these differ from Workers' `preview_urls` setting. The existing Workers
+configuration and dry-run script remain available as an alternative, subject
+to the Workers hostname checks below. Neither a Pages deployment nor a GitHub
+push updates the manuscript or OSF package.
+
+### Content checks and alternative Workers publication
+
 The normal check includes an anonymous-release gate. It allows only the 16
 expected static assets and fails if a deployable file contains an author name,
 institution, email address, ORCID-like identifier, grant identifier, local
