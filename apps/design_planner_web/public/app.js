@@ -1398,7 +1398,12 @@
     }
   });
   elements.reset.addEventListener("click", () => loadFixture(elements.template.value));
-  elements.evaluate.addEventListener("click", evaluateDesign);
+  elements.evaluate.addEventListener("click", () => {
+    window.clearTimeout(evaluationTimer);
+    evaluateDesign();
+    elements.stateTitle.focus({ preventScroll: true });
+    elements.stateTitle.scrollIntoView?.({ block: "start" });
+  });
   elements.addFacet.addEventListener("click", () => {
     const design = collectDesign();
     design.facets.push({

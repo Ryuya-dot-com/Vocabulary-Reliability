@@ -608,6 +608,25 @@ domById("start-effect-planning").click();
 domById("review-effect-design").click();
 assert.equal(domById("design-details").open, true);
 
+// Explicit evaluation reveals its result; automatic checks preserve editing focus.
+let auditResultScrolls = 0;
+domById("result-title").scrollIntoView = () => { auditResultScrolls += 1; };
+domById("evaluate-design").click();
+assert.equal(dom.window.document.activeElement.id, "result-title", "Evaluate structure must focus its result");
+assert.equal(auditResultScrolls, 1, "Evaluate structure must bring its result into view");
+assert.equal(domById("result-title").textContent, "Estimable but fragile");
+domById("condition-levels").focus();
+domById("condition-levels").value = "1";
+domById("condition-levels").dispatchEvent(new dom.window.Event("input", { bubbles: true }));
+await new Promise(resolve => dom.window.setTimeout(resolve, 180));
+assert.equal(domById("result-title").textContent, "Not identifiable");
+assert.equal(dom.window.document.activeElement.id, "condition-levels", "automatic evaluation must not interrupt editing");
+assert.equal(auditResultScrolls, 1, "automatic evaluation must not scroll to the result");
+domById("evaluate-design").click();
+assert.equal(dom.window.document.activeElement.id, "result-title", "blocked results must also be revealed");
+assert.equal(auditResultScrolls, 2);
+delete domById("result-title").scrollIntoView;
+
 selectTemplate("one_class_per_condition");
 assert.equal(domById("route-gate").dataset.gate, "blocked");
 assert.equal(domById("effect-value").textContent, "Blocked");

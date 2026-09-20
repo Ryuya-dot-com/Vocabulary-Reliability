@@ -1423,7 +1423,7 @@ body[data-mode="guided"] .reporting-starter { margin: 0 clamp(1.25rem, 3.5vw, 2.
 }
 
 .curve-readout .readout-reduction { margin-top: .5rem; font-size: .78rem; color: var(--muted); font-weight: 500; }
-.planner-steps { scroll-margin-top: 1.25rem; }
+.planner-steps, #result-title { scroll-margin-top: 1.25rem; }
 
 @media (min-width: 381px) and (max-width: 760px) {
   .count-fields .field > span { min-height: 3.1em; }

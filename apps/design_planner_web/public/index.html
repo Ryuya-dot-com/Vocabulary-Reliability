@@ -7,7 +7,7 @@
   <meta name="robots" content="noindex, nofollow, noarchive">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
   <title>Vocabulary Design Planner</title>
-  <link rel="stylesheet" href="./styles.css?v=a07216b5547e">
+  <link rel="stylesheet" href="./styles.css?v=e93e54a508a9">
 </head>
 <body data-mode="overview">
   <a class="skip-link" href="#planning-entry-title">Skip to planner</a>
@@ -353,7 +353,7 @@
         <div class="form-actions">
           <button id="evaluate-design" class="button button-primary" type="button">Evaluate structure</button>
           <button id="reset-template" class="button button-quiet" type="button">Reset example</button>
-          <span class="autoscan-note">The audit updates locally as inputs change.</span>
+          <span class="autoscan-note">Inputs are checked automatically. Evaluate structure takes you to the result.</span>
         </div>
       </form>
 
@@ -362,7 +362,7 @@
           <p class="section-label">Current decision</p>
           <div id="state-card" class="state-card">
             <span id="state-kicker" class="state-kicker">Validation state</span>
-            <h2 id="result-title">Waiting for design</h2>
+            <h2 id="result-title" tabindex="-1">Waiting for design</h2>
             <p id="state-description">Complete the design graph to evaluate identification and scope.</p>
           </div>
 
@@ -424,6 +424,6 @@
   <script src="./claim_math.js?v=0cd28a01db5b"></script>
   <script src="./audit_data.js?v=bb53d91c214f"></script>
   <script src="./claim_data.js?v=aefe802388f1"></script>
-  <script src="./app.js?v=8e8e62f0b90e"></script>
+  <script src="./app.js?v=b6ae673271d0"></script>
 </body>
 </html>
