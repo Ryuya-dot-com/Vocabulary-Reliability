@@ -72,11 +72,14 @@ const claimBundle = [
 ].join("\n");
 await writeFile(path.join(publicRoot, "claim_data.js"), claimBundle, "utf8");
 
+await writeFile(path.join(publicRoot, "simulation_data.js"), `/* Generated R simulation engine. */\nwindow.SimulationEngine = ${JSON.stringify(await readFile(path.join(appRoot, "simulation_engine.R"), "utf8"))};\n`, "utf8");
+
 const artifactNames = [
   "index.html",
   "styles.css",
   "app.js",
   "study_plan.js",
+  "simulation_data.js",
   "design_audit.js",
   "claim_math.js",
   "design_audit.schema.json",

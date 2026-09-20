@@ -1,4 +1,4 @@
-/* Local score arithmetic and model specification; no simulation or model fitting. */
+/* Local score/model specifications and offline R simulation export. */
 (function (root) {
   "use strict";
   const idPattern = /^[A-Za-z][A-Za-z0-9_]*$/;
@@ -95,6 +95,12 @@
       "# Not a power simulation. For planning, specify predictor distributions,",
       "# correlations, effect sizes, covariance matrices and the response process.",
       scoreR(scoreInputs),
+      ...analysisLines(plan, design, scoreInputs)
+    ].join("\n");
+  }
+
+  function analysisLines(plan, design, scoreInputs) {
+    return [
       `model_formula <- as.formula(${JSON.stringify(plan.formula)})`,
       "print(model_formula)",
       "# fit_study(data) requires lme4 with support for the displayed covariance syntax.",
@@ -134,7 +140,98 @@
       "# Inspect convergence messages and singularity; compare model and score definitions.",
       "# Exclusion changes the estimand to initially unknown items and may change denominators.",
       "# The example does not establish motivation benefits or causal identification.", ""
+    ];
+  }
+  function simulationPlan(model, design, scoreInputs, settings, predictorSettings) {
+    const errors = [];
+    const pair = list => list.length === 2 && [...list].sort().join(",") === "item,participant";
+    if (!model.formula) errors.push("Resolve the model and structural issues first.");
+    if (!pair(design.facets.map(f => f.id)) || !pair(design.units.assignment) ||
+        design.assignment.mode !== "crossed_counterbalance" || design.assignment.condition_levels !== 2 ||
+        design.facets.some(f => f.parent || f.model_role !== "random" || !f.condition_varies_within || !["none", "diag", "us"].includes(f.slope) || !["iid", "diag", "us"].includes(f.dependence))) {
+      errors.push("This simulator requires exactly crossed participant and item facets, two counterbalanced conditions and none/diag/us slope structures. Other designs can still use the analysis specification.");
+    }
+    const integer = (key, min, max) => {
+      if (!Number.isSafeInteger(settings[key]) || settings[key] < min || settings[key] > max) errors.push(`${key}: enter a whole number from ${min} to ${max}.`);
+    };
+    integer("n", 4, 5000); integer("k", 2, 500); integer("reps", 2, 10000); integer("seed", 1, 2147473647); integer("fillers", 0, 1000);
+    if (settings.n % 2) errors.push("Use an even learner count for equal counterbalancing lists.");
+    if (settings.n * 2 * settings.k * model.coefficient_count > 2000000) errors.push("The planned fixed-effect matrix exceeds two million cells. Reduce counts/terms or prepare a custom simulation.");
+    for (const key of ["intercept", "effect"]) if (!Number.isFinite(settings[key])) errors.push(`${key}: enter a finite logit coefficient.`);
+    for (const key of ["alpha", "known_rate", "known_accuracy", "filler_accuracy"]) {
+      if (!Number.isFinite(settings[key]) || settings[key] < 0 || settings[key] > 1 || (key === "alpha" && [0, 1].includes(settings[key]))) errors.push(`${key}: enter a valid probability (alpha strictly between 0 and 1).`);
+    }
+    if (scoreInputs.policy === "all_targets" && settings.known_rate !== 0) errors.push("For known target mixtures, select initially unknown targets in the score definition. This simulator otherwise requires known-target rate = 0; it does not fit an omitted knownness mixture.");
+    const beta = { "(Intercept)": settings.intercept, condition_c: settings.effect };
+    const predictors = model.predictors.map((p, i) => {
+      const values = predictorSettings[i];
+      const unit = p.within.length === 1 && p.within[0] === "item" ? "learner"
+        : p.within.length === 1 && p.within[0] === "participant" ? "word"
+        : pair(p.within) ? "response" : null;
+      if (!unit) errors.push(`${p.name}: declare variation within item (learner-level), participant (word-level), or both (response-level) for this generator.`);
+      const count = p.type === "factor" ? p.levels - 1 : 1;
+      for (const key of ["main", ...(p.interaction ? ["interaction"] : [])]) {
+        if (!values || values[key].length !== count || values[key].some(v => !Number.isFinite(v))) errors.push(`${p.name}: supply ${count} finite ${key} coefficient(s).`);
+      }
+      if (p.type === "numeric" && (!values || !Number.isFinite(values.mean) || !Number.isFinite(values.sd) || values.sd <= 0)) errors.push(`${p.name}: numeric predictors need a finite normal mean and positive SD.`);
+      const names = p.type === "numeric" ? [p.name] : Array.from({ length: Math.min(100, Math.max(0, count)) }, (_, i) => `factor(${p.name})${i + 2}`);
+      names.forEach((name, index) => {
+        beta[name] = values?.main[index];
+        if (p.interaction) beta[`condition_c:${name}`] = values?.interaction[index];
+      });
+      return { name: p.name, type: p.type, levels: p.type === "factor" ? p.levels : null, mean: p.type === "numeric" ? values?.mean : null, sd: p.type === "numeric" ? values?.sd : null, unit };
+    });
+    const random = {};
+    for (const facet of design.facets.filter(f => ["participant", "item"].includes(f.id))) {
+      const prefix = facet.id === "participant" ? "person" : "word";
+      for (const suffix of ["intercept_sd", "condition_sd", "additional_sd"]) {
+        const value = settings[`${prefix}_${suffix}`];
+        if (!Number.isFinite(value) || value < 0) errors.push(`${prefix}_${suffix}: enter a finite non-negative SD.`);
+      }
+      const terms = facet.slope === "none" ? [] : ["condition_c"];
+      let count = 1 + terms.length;
+      for (const p of model.predictors.filter(p => p.slopes.includes(facet.id))) {
+        const term = p.type === "factor" ? `factor(${p.name})` : p.name;
+        terms.push(term, ...(p.interaction ? [`condition_c:${term}`] : []));
+        count += (p.type === "factor" ? p.levels - 1 : 1) * (p.interaction ? 2 : 1);
+      }
+      const rho = settings[`${prefix}_rho`];
+      if (!Number.isFinite(rho) || (count > 1 && (rho <= -1 / (count - 1) || rho >= 1)) || (facet.slope !== "us" && rho !== 0)) errors.push(`${prefix}_rho: use zero for diag/none; for us the common correlation must be > ${count > 1 ? (-1 / (count - 1)).toFixed(3) : "-1"} and < 1.`);
+      random[facet.id] = { dimension: count, covariance: facet.slope === "us" ? "us" : "diag", formula: `~ 1${terms.length ? " + " + terms.join(" + ") : ""}`, intercept_sd: settings[`${prefix}_intercept_sd`], condition_sd: settings[`${prefix}_condition_sd`], additional_sd: settings[`${prefix}_additional_sd`], rho };
+    }
+    if (!Object.hasOwn(beta, settings.test_term) || settings.test_term === "(Intercept)") errors.push("Select a fixed coefficient to test.");
+    return { status: errors.length ? "blocked" : "ready_for_offline_simulation", errors: [...new Set(errors)],
+      config: { ...Object.fromEntries(["n", "k", "reps", "seed", "alpha", "known_rate", "known_accuracy", "fillers", "filler_accuracy", "test_term"].map(key => [key, settings[key]])), policy: scoreInputs.policy, beta, predictors, random },
+      test_terms: Object.keys(beta).filter(name => name !== "(Intercept)") };
+  }
+
+  function rValue(value) {
+    if (value === null || value === undefined) return "NULL";
+    if (typeof value === "boolean") return value ? "TRUE" : "FALSE";
+    if (typeof value === "number") { if (!Number.isFinite(value)) throw new Error("Non-finite R input."); return String(value); }
+    if (typeof value === "string") return JSON.stringify(value);
+    if (Array.isArray(value)) return `list(${value.map(rValue).join(", ")})`;
+    return `list(${Object.entries(value).map(([key, v]) => `${JSON.stringify(key)} = ${rValue(v)}`).join(",\n  ")})`;
+  }
+
+  function simulationR(simulation, model, design, scoreInputs) {
+    if (simulation.status !== "ready_for_offline_simulation") throw new Error("Resolve simulation assumptions before exporting.");
+    return [
+      "# Vocabulary design planner: assumption-based Monte Carlo simulation",
+      "# Rscript --vanilla vocabulary-power-simulation.R runs the simulation.",
+      "# In RStudio, source this file, then call run_simulation(). Requires lme4 >= 2.0.6.",
+      "# Writes a NEW output directory: assumptions, per-replication results, summary,",
+      "# session information and interpretation notes. No package installation or network use.",
+      "# Independent covariates; one binary target response per learner-word pair.",
+      "# Numeric coefficients are per entered predictor unit; factors use level 1 as reference.",
+      "# A condition main effect with interactions is conditional at numeric 0/reference levels.",
+      "# All entries are assumptions, not fitted estimates or a sample-size recommendation.",
+      "# Methods: https://doi.org/10.1002/sim.8086; https://lme4.github.io/lme4/reference/pvalues.html",
+      `config <- ${rValue(simulation.config)}`, "",
+      ...analysisLines(model, design, scoreInputs), root.SimulationEngine,
+      "if (sys.nframe() == 0L) run_simulation()", ""
     ].join("\n");
   }
-  root.StudyPlan = Object.freeze({ scoreComparison, modelPlan, scoreR, modelR });
+
+  root.StudyPlan = Object.freeze({ scoreComparison, modelPlan, scoreR, modelR, simulationPlan, simulationR });
 })(window);

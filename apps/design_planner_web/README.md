@@ -81,15 +81,81 @@ The function requires binary response data, explicit target/filler item roles,
 matching predictor/grouping columns, and lme4 supporting the displayed covariance
 syntax (tested with 2.0.6). It excludes fillers, applies the chosen pretest-known
 policy, checks missing data and fixed-effect rank, and reports singular fits.
-This is an analysis template, not a Monte Carlo power simulator. Interactions
-among added predictors, arbitrary formulas, and covariance-parameter planning
-are not provided by this editor. Any precision/power study still needs an explicit
-data-generating model and design-specific simulation.
+This download is an analysis template. The separate simulation download below
+adds an explicit generating model for a narrower class of designs. Interactions
+among added predictors, arbitrary formulas and longitudinal schedules are not
+provided by this editor.
 
 Run `node test.mjs --check-r` to check score parity and actual numeric/categorical
 GLMM fits, including target/filler and pretest-known filtering. Ordinary `npm test`
 covers invalid counts, empty eligibility, invalid slope declarations, duplicate
 and unsafe names, numerical gating, downloads and example reset.
+
+## Offline power simulation
+
+Inside the design structure disclosure, **Plan an offline power simulation in R**
+exports `vocabulary-power-simulation.R`. It requires lme4 >= 2.0.6. Running
+`Rscript --vanilla vocabulary-power-simulation.R` creates a new output directory;
+in RStudio, source the file and call `run_simulation()`. Nothing is simulated in
+the browser, no packages are installed, and existing output directories are not
+overwritten. Each completed replication is saved before the next starts.
+
+Supported generating design:
+
+- Exactly two counterbalanced conditions, crossed participant and item facets,
+  one binary target response per learner-word pair, and an even learner count.
+  The simulation counts are independent of the curve and score-illustration counts.
+- The specified numeric/factor main effects, condition interactions and requested
+  random slopes. Numeric predictors are independent normal draws; categories are
+  equiprobable with treatment coding (level 1 reference). A predictor declared
+  to vary within item only is learner-level; within participant only is word-level;
+  within both is response-level. These are not repeated-time schedules.
+- Random effects are normal and zero-mean. Intercept/condition SDs are separate;
+  each additional slope uses the entered common SD for that facet. Generating
+  correlations are zero for diag/none or one valid common correlation for us.
+  The fitted us model estimates a full covariance matrix. Controls for absent
+  slopes are inactive. The fit and generating terms match; omitted true effects
+  and correlated covariates require a custom simulation.
+- Pretest-known status is independent of ability, difficulty and condition.
+  Nonzero known-target rates require unknown-only scoring: known targets get the
+  entered posttest accuracy and are excluded. This models independent eligibility
+  loss, not informative pretesting. Response counts are recorded overall and by
+  condition, including empty learner-condition cells.
+- Fillers are independent feedback-only responses and never enter the model.
+  Separate per-replication seeds keep target draws fixed when filler counts change.
+  No motivation, fatigue, exposure or reliability effect is inferred.
+
+Choose a fixed coefficient to test. With interactions, the condition main effect
+is at numeric zero and categorical reference levels, not a marginal effect.
+The test is a two-sided asymptotic Wald z test. Set that coefficient to zero to
+examine Type I error under the same nuisance parameters; changing the intercept
+or another effect does not define the same null hypothesis.
+
+Outputs include the full assumptions, R session information, a replication ledger,
+a summary CSV and interpretation notes. The primary rejection rate and 95% Wald
+coverage use converged finite estimates, including singular fits. Nonconverged
+and failed fits are not silently counted as nonsignificant. The summary also
+reports nonsingular rejection, every denominator, binomial MCSEs and Wilson
+intervals, and bounds obtained by treating none/all missing results as significant.
+The fraction both usable and significant is labeled separately. At observed rates
+of zero or one, use the interval as well as MCSE. High rejection with many failures
+is not sufficient evidence of a good design.
+
+The exported script can be edited through `config$beta`, `config$random` and
+predictor settings; `run_simulation()` validates counts, probabilities and covariance
+constraints before writing files. Source the script to run alternative settings.
+UI limits keep the fixed design matrix at or below two million cells; larger,
+correlated, hierarchical or repeated-time designs require a custom implementation.
+This does not define a validated parameter envelope. Methods follow the
+[simulation reporting framework](https://doi.org/10.1002/sim.8086) and
+[lme4's documented Wald-test limitations](https://lme4.github.io/lme4/reference/pvalues.html).
+
+`node test.mjs --check-r` executes exported numeric/categorical simulations and
+the standalone CLI, checks counterbalancing and filler invariance, exercises
+unknown-only/empty eligibility and injected fit failures, and verifies summary
+denominators against a hand-constructed ledger. Structural facet edits preserve
+fixed predictors and their simulation assumptions; loading an example clears
+predictors, and restarting the guide resets simulation settings as well.
 
 ## Learners-or-words planning workflow
 

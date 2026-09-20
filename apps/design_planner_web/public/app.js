@@ -9,7 +9,7 @@
   const targetRegistry = window.InferentialTargetRegistry;
   const referenceGridRegistry = window.ReferenceGridRegistry;
   const decisionRules = window.DecisionRulesRegistry;
-  if (!core || !claimMath || !studyPlan || !fixturePayload || !registry || !targetRegistry ||
+  if (!core || !claimMath || !studyPlan || !window.SimulationEngine || !fixturePayload || !registry || !targetRegistry ||
       !referenceGridRegistry || !decisionRules) {
     throw new Error("Design-audit or claim-routing assets failed to load.");
   }
@@ -171,6 +171,8 @@
   let currentBranchId = targetRegistry.branches[0].id;
   let currentAudit = null;
   let currentRoute = null;
+  let currentSimulation = null;
+  const simulationFields = ["n", "k", "reps", "seed", "intercept", "effect", "alpha", "person_intercept_sd", "person_condition_sd", "person_additional_sd", "person_rho", "word_intercept_sd", "word_condition_sd", "word_additional_sd", "word_rho", "known_rate", "known_accuracy", "fillers", "filler_accuracy"];
   let currentModel = null;
   let currentScore = null;
   let predictorSequence = 0;
@@ -274,6 +276,7 @@
     currentAudit.inferential_route = currentRoute;
     currentAudit.model_plan = currentModel;
     currentAudit.score_plan = currentScore;
+    currentAudit.simulation_plan = currentSimulation;
     elements.payload.textContent = JSON.stringify(currentAudit, null, 2);
   }
 
@@ -338,7 +341,7 @@
     const base = conditionAuditGate();
     if (base.status === "blocked") return base;
     if (currentModel?.status === "blocked" || currentModel?.predictors.length) {
-      return { status: "blocked", title: "Additional model specification needs offline analysis", message: "Resolve any model-input errors, then download the analysis specification below. Extra fixed effects and their slopes are outside this two-facet projection; specify distributions and covariances in a design-specific simulation to evaluate precision or power." };
+      return { status: "blocked", title: "Additional model specification needs offline analysis", message: "Resolve any model-input errors, then download the analysis specification below. Extra fixed effects and their slopes are outside this projection. Use the offline simulation controls for supported two-facet models, or customize the analysis specification for other designs." };
     }
     if (currentScore?.error || currentScore?.inputs.policy === "unknown_only") {
       return { status: "blocked", title: "Review the target-score definition", message: currentScore.error || "Excluding pretest-known responses changes the eligible item sets. The balanced fixed-target projection does not cover this policy. Download the analysis specification and examine eligibility by learner and condition." };
@@ -966,6 +969,7 @@
 
   function renderClaimRoute() {
     renderScorePlan();
+    renderSimulation();
     const branch = branchById.get(currentBranchId) || targetRegistry.branches[0];
     elements.routeBranch.textContent = `Branch ${branch.number}`;
     elements.routeQuestion.textContent = branch.question;
@@ -1336,8 +1340,73 @@
     row.querySelector("input").focus({ preventScroll: true });
   }
 
+  function syncSimulationPredictors() {
+    const rows = [...byId("predictor-rows").children];
+    const ids = rows.map(row => row.querySelector('[data-predictor="name"]').id);
+    for (const card of [...byId("simulation-predictors").children]) if (!ids.includes(card.dataset.sourceId)) card.remove();
+    currentModel.predictors.forEach((p, index) => {
+      const id = ids[index];
+      let card = [...byId("simulation-predictors").children].find(card => card.dataset.sourceId === id);
+      if (!card) {
+        card = document.createElement("fieldset"); card.className = "predictor-card field-grid"; card.dataset.sourceId = id;
+        const legend = document.createElement("legend"); card.append(legend);
+        for (const [key, title, value] of [["main", "Main-effect logit coefficients (comma-separated)", "0"], ["interaction", "Condition-interaction logit coefficients (comma-separated)", "0"], ["mean", "Normal mean", 0], ["sd", "Normal SD", 1]]) {
+          const label = document.createElement("label"); label.className = "field";
+          const span = document.createElement("span"); span.textContent = title;
+          const input = makeInput(["mean", "sd"].includes(key) ? "number" : "text", value, `${p.name || "Predictor"}: ${title}`);
+          input.id = `sim-${id}-${key}`; input.dataset.simPredictor = key;
+          if (input.type === "number") { input.step = "any"; input.removeAttribute("min"); if (key === "sd") input.min = "0"; }
+          label.htmlFor = input.id; label.append(span, input); card.append(label);
+        }
+        byId("simulation-predictors").append(card);
+      }
+      const count = p.type === "factor" ? p.levels - 1 : 1;
+      card.querySelector("legend").textContent = `${p.name || "Unnamed predictor"}: ${count} coefficient(s) per selected term${p.type === "factor" ? ", levels 2 onward versus level 1" : ""}`;
+      for (const input of card.querySelectorAll("input")) {
+        const key = input.dataset.simPredictor;
+        input.disabled = key === "interaction" ? !p.interaction : ["mean", "sd"].includes(key) && p.type !== "numeric";
+        input.setAttribute("aria-label", `${p.name || "Predictor"}: ${input.parentElement.querySelector("span").textContent}`);
+      }
+    });
+  }
+
+  function renderSimulation() {
+    const settings = Object.fromEntries(simulationFields.map(key => [key, numberFrom(byId(`sim-${key}`))]));
+    for (const facet of currentAudit.design.facets.filter(f => ["participant", "item"].includes(f.id))) {
+      const prefix = facet.id === "participant" ? "person" : "word";
+      const flags = { condition_sd: facet.slope !== "none", additional_sd: currentModel.predictors.some(p => p.slopes.includes(facet.id)) };
+      for (const [suffix, active] of Object.entries(flags)) {
+        byId(`sim-${prefix}_${suffix}`).disabled = !active;
+        if (!active) settings[`${prefix}_${suffix}`] = 0;
+      }
+    }
+    settings.test_term = byId("sim-test-term").value || "condition_c";
+    const values = [...byId("simulation-predictors").children].map(card => {
+      const field = key => card.querySelector(`[data-sim-predictor="${key}"]`);
+      const coefficients = key => field(key).value.trim() ? field(key).value.split(",").map(v => v.trim() ? Number(v) : NaN) : [];
+      return { main: coefficients("main"), interaction: coefficients("interaction"), mean: numberFrom(field("mean")), sd: numberFrom(field("sd")) };
+    });
+    currentSimulation = studyPlan.simulationPlan(currentModel, currentAudit.design, currentScore.inputs, settings, values);
+    const previousTerms = [...byId("sim-test-term").options].map(option => option.value).join("|");
+    if (previousTerms !== currentSimulation.test_terms.join("|")) {
+      replaceSelectValues(byId("sim-test-term"), currentSimulation.test_terms);
+      settings.test_term = byId("sim-test-term").value;
+      currentSimulation = studyPlan.simulationPlan(currentModel, currentAudit.design, currentScore.inputs, settings, values);
+    }
+    const ready = currentSimulation.status === "ready_for_offline_simulation";
+    replaceList(byId("simulation-errors"), currentSimulation.errors);
+    byId("simulation-status").textContent = ready
+      ? `Ready to export ${settings.reps} replications for ${settings.n} learners and ${2 * settings.k} target words. Test: ${settings.test_term}. This is a specification, not a computed power result.`
+      : "Review the assumptions below. The analysis-specification download remains separate from this simulator's narrower scope.";
+    byId("sim-precision").textContent = Number.isFinite(settings.reps) && settings.reps > 0
+      ? `With all replications usable, the largest binomial Monte Carlo SE is about ${(100 * Math.sqrt(.25 / settings.reps)).toFixed(2)} percentage points. Fit failures reduce the usable denominator. More replications improve simulation precision, not study power.` : "Enter the number of replications to see its Monte Carlo precision.";
+    byId("download-simulation-r").disabled = !ready;
+    byId("simulation-r-code").textContent = ready ? studyPlan.simulationR(currentSimulation, currentModel, currentAudit.design, currentScore.inputs) : "Resolve simulation assumptions to export.";
+  }
+
   function renderModelPlan(design, result) {
     currentModel = studyPlan.modelPlan(design, result, collectPredictors());
+    syncSimulationPredictors();
     elements.formula.textContent = currentModel.formula || "Suppressed: resolve structural and model-input issues first.";
     byId("model-summary").textContent = `${currentModel.predictors.length} added fixed predictors; ${Number.isFinite(currentModel.coefficient_count) ? currentModel.coefficient_count : "—"} nominal fixed coefficients including intercept. ${currentModel.predictors.length ? "Additional terms require offline analysis; the study-size curve is unavailable." : "The base two-facet projection remains subject to its design and scoring gates."}`;
     replaceList(byId("model-errors"), currentModel.errors);
@@ -1411,6 +1480,11 @@
   elements.registryVersion.textContent = registry.registry_version;
   elements.registryCount.textContent = `${validatedIds.length} validated envelope${validatedIds.length === 1 ? "" : "s"}`;
 
+  byId("download-simulation-r").addEventListener("click", () => {
+    window.clearTimeout(evaluationTimer);
+    evaluateDesign();
+    if (currentSimulation.status === "ready_for_offline_simulation") downloadText(studyPlan.simulationR(currentSimulation, currentModel, currentAudit.design, currentScore.inputs), "vocabulary-power-simulation.R", "text/plain");
+  });
   byId("add-predictor").addEventListener("click", addPredictor);
   for (const event of ["input", "change"]) byId("score-inputs").addEventListener(event, renderClaimRoute);
   byId("download-score-r").addEventListener("click", () => {
@@ -1438,6 +1512,7 @@
     for (const [field, value] of [[elements.effectN, 120], [elements.effectK, 15],
       [elements.effectPersonSd, .35], [elements.effectItemSd, .18], [elements.effectMemory, .2]]) field.value = value;
     elements.effectMemoryAdjusted.checked = false;
+    for (const key of simulationFields) byId(`sim-${key}`).value = byId(`sim-${key}`).defaultValue;
     byId("score-policy").value = "all_targets";
     for (const [id, value] of [["target", 30], ["correct", 15], ["fillers", 10], ["filler-correct", 10], ["known", 0], ["known-correct", 0]]) byId(`score-${id}`).value = value;
     loadFixture("two_facet_counterbalanced");
@@ -1544,7 +1619,6 @@
       slope: "diag"
     });
     renderFacetRows(design.facets);
-    byId("predictor-rows").replaceChildren();
     evaluateDesign();
   });
   elements.facetRows.addEventListener("click", event => {
@@ -1553,7 +1627,6 @@
     const design = collectDesign();
     design.facets.splice(Number(removeButton.dataset.removeIndex), 1);
     renderFacetRows(design.facets);
-    byId("predictor-rows").replaceChildren();
     evaluateDesign();
   });
   elements.form.addEventListener("input", scheduleEvaluation);

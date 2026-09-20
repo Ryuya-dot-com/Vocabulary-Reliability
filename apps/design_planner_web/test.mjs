@@ -177,6 +177,7 @@ dom.window.eval(coreJs);
 dom.window.eval(claimMathJs);
 dom.window.eval(dataJs);
 dom.window.eval(claimDataJs);
+dom.window.eval(await readText("simulation_data.js"));
 dom.window.eval(await readText("study_plan.js"));
 dom.window.eval(appJs);
 
@@ -799,6 +800,131 @@ cat("Score/R parity, filtering, numeric and factor GLMM specifications OK\\n")
   } finally { await rm(directory, { recursive: true, force: true }); }
 }
 console.log("Study planning: score definitions, zero eligibility, model slopes, gates and R exports OK");
+
+// Runnable power simulation: separate gate, complete assumptions, no browser fits.
+domById("start-effect-planning").click();
+assert.equal(studyPayload().simulation_plan.status, "ready_for_offline_simulation");
+assert.equal(domById("download-simulation-r").disabled, false);
+await setStudyField("sim-n", "41");
+assert.equal(domById("download-simulation-r").disabled, true);
+await setStudyField("sim-n", "40");
+await setStudyField("sim-k", "10");
+await setStudyField("sim-reps", "3");
+await setStudyField("sim-person_rho", ".2");
+assert.match(domById("simulation-errors").textContent, /zero for diag/);
+await setStudyField("sim-person_rho", "0");
+const baseSimulationR = domById("simulation-r-code").textContent;
+domById("download-simulation-r").click();
+assert.equal(downloadedName, "vocabulary-power-simulation.R");
+assert.equal(await downloadedBlob.text(), baseSimulationR);
+await setStudyField("sim-known_rate", ".3");
+assert.equal(domById("download-simulation-r").disabled, true);
+await setStudyField("score-policy", "unknown_only");
+assert.equal(domById("download-simulation-r").disabled, false);
+const knownSimulationR = domById("simulation-r-code").textContent;
+domById("add-predictor").click();
+predictorRow = domById("predictor-rows").firstElementChild;
+await setStudyField(predictorField("name").id, "ability");
+await setStudyField(predictorField("within").id, "item");
+await setStudyField(predictorField("slopes").id, "item");
+predictorField("interaction").checked = true;
+predictorField("interaction").dispatchEvent(new dom.window.Event("input", { bubbles: true }));
+await new Promise(resolve => setTimeout(resolve, 150));
+let simCard = domById("simulation-predictors").firstElementChild;
+const simField = key => simCard.querySelector(`[data-sim-predictor="${key}"]`);
+await setStudyField(simField("main").id, ".25");
+await setStudyField(simField("interaction").id, ".3");
+await setStudyField("sim-test-term", "condition_c:ability");
+assert.equal(studyPayload().simulation_plan.config.beta["condition_c:ability"], .3);
+assert.equal(studyPayload().simulation_plan.config.predictors[0].unit, "learner");
+const numericSimulationR = domById("simulation-r-code").textContent;
+// Inactive type-specific fields cannot leak NaN into an otherwise valid R export.
+await setStudyField(predictorField("levels").id, "");
+assert.equal(domById("download-simulation-r").disabled, false);
+await setStudyField(predictorField("levels").id, "2");
+const retainedPredictorId = predictorField("name").id;
+domById("add-facet").click();
+assert.equal(domById("predictor-rows").children.length, 1, "facet edits must preserve predictors");
+assert.equal(predictorField("name").id, retainedPredictorId);
+assert.equal(simField("main").value, ".25", "simulation assumptions survive structural edits");
+assert.equal(domById("download-simulation-r").disabled, true);
+domById("facet-rows").lastElementChild.querySelector("button").click();
+assert.equal(domById("download-simulation-r").disabled, false);
+await setStudyField(simField("mean").id, "");
+assert.equal(domById("download-simulation-r").disabled, true);
+await setStudyField(predictorField("type").id, "factor");
+await setStudyField(predictorField("levels").id, "3");
+assert.equal(domById("download-simulation-r").disabled, true, "need a coefficient for each factor contrast");
+await setStudyField(simField("main").id, ".2, .4");
+await setStudyField(simField("interaction").id, ".1, .3");
+await setStudyField("sim-test-term", "condition_c:factor(ability)3");
+// A full fitted covariance allows a valid nonzero common generating correlation.
+const itemSlope = domById("facet-rows").children[1].querySelector('[data-field="slope"]');
+itemSlope.value = "us";
+itemSlope.dispatchEvent(new dom.window.Event("change", { bubbles: true }));
+await new Promise(resolve => setTimeout(resolve, 150));
+await setStudyField("sim-word_rho", "-.5");
+assert.equal(domById("download-simulation-r").disabled, true);
+await setStudyField("sim-word_rho", ".1");
+assert.equal(domById("download-simulation-r").disabled, false);
+const factorSimulationR = domById("simulation-r-code").textContent;
+await setStudyField("sim-seed", "2147483647");
+assert.equal(domById("download-simulation-r").disabled, true);
+await setStudyField("sim-seed", "4101");
+await setStudyField("sim-n", "5000");
+await setStudyField("sim-k", "500");
+assert.equal(domById("download-simulation-r").disabled, true, "reject impractically large fixed matrices");
+domById("start-effect-planning").click();
+assert.equal(studyPayload().simulation_plan.status, "ready_for_offline_simulation");
+assert.equal(domById("sim-known_rate").value, "0");
+assert.equal(domById("sim-n").value, "60");
+
+if (process.argv.includes("--check-r")) {
+  const directory = await mkdtemp(path.join(tmpdir(), "power-simulation-r-"));
+  try {
+    for (const [file, content] of [["base.R", baseSimulationR], ["known.R", knownSimulationR], ["numeric.R", numericSimulationR], ["factor.R", factorSimulationR]]) await writeFile(path.join(directory, file), content);
+    await writeFile(path.join(directory, "check.R"), `
+source("base.R")
+a <- simulate_study(712)
+stopifnot(nrow(a$data) == 800, all(table(a$data$participant, a$data$condition_c) == 10), all(table(a$data$item, a$data$condition_c) == 20))
+config$fillers <- 100
+b <- simulate_study(712)
+stopifnot(identical(a$data, b$data), b$diagnostics$mean_feedback_score > a$diagnostics$mean_feedback_score)
+config$fillers <- 10
+x <- run_simulation(n_rep = 3, output_dir = "base-output")
+stopifnot(nrow(x$replications) == 3, x$summary$usable_reps > 0, all(file.exists(file.path("base-output", c("assumptions.R", "replications.csv", "summary.csv", "session-info.txt", "README.txt")))))
+y <- run_simulation(n_rep = 2, output_dir = "failed-output", fit_fun = function(data) stop("injected failure"))
+stopifnot(y$summary$usable_reps == 0, is.na(y$summary$rejection_usable), y$summary$rejection_missing_lower == 0, y$summary$rejection_missing_upper == 1, all(y$replications$error == "injected failure"))
+stopifnot(inherits(try(run_simulation(output_dir = "base-output"), silent = TRUE), "try-error"))
+stopifnot(rate_summary(0, 10)["high"] > 0, rate_summary(10, 10)["low"] < 1)
+# A hand-computed mixed success/failure ledger verifies denominators and singular sensitivity.
+r <- x$replications[rep(1, 4), ]; r$usable <- c(TRUE,TRUE,FALSE,FALSE); r$p_value <- c(.01,.4,NA,NA)
+r$singular <- c(TRUE,FALSE,NA,NA); r$covered_95 <- c(TRUE,FALSE,NA,NA); r$status <- c("converged","converged","failed","nonconverged")
+s <- summarize_simulation(r)
+stopifnot(s$rejection_usable == .5, s$rejection_nonsingular == 0, s$rejection_missing_lower == .25, s$rejection_missing_upper == .75, s$coverage_95_usable == .5)
+source("known.R")
+z <- simulate_study(712)
+stopifnot(z$diagnostics$eligible_responses < 800, z$diagnostics$min_eligible_per_learner < z$diagnostics$max_eligible_per_learner)
+f <- suppressMessages(suppressWarnings(fit_study(z$data)))
+stopifnot(nobs(f) == z$diagnostics$eligible_responses)
+config$known_rate <- 1
+z <- run_simulation(n_rep = 2, output_dir = "empty-output")
+stopifnot(z$summary$usable_reps == 0, all(z$replications$zero_eligible_learners == 40), all(is.na(z$replications$mean_unknown_score)))
+source("numeric.R")
+x <- run_simulation(n_rep = 2, output_dir = "numeric-output")
+stopifnot(x$summary$test_term == "condition_c:ability", x$summary$true_coefficient == .3, x$summary$usable_reps > 0)
+source("factor.R")
+x <- run_simulation(n_rep = 2, output_dir = "factor-output")
+stopifnot(x$summary$test_term == "condition_c:factor(ability)3", x$summary$true_coefficient == .3, nrow(x$replications) == 2, x$summary$failed_reps == 0)
+cat("Simulation execution, generators, coefficient mapping, exclusions, failures and Monte Carlo summaries OK\\n")
+`);
+    const output = execFileSync("Rscript", ["--vanilla", "check.R"], { cwd: directory, timeout: 120000, encoding: "utf8", stdio: "pipe" });
+    assert.match(output, /Monte Carlo summaries OK/);
+    const cliOutput = execFileSync("Rscript", ["--vanilla", "base.R"], { cwd: directory, timeout: 60000, encoding: "utf8", stdio: "pipe" });
+    assert.match(cliOutput, /Power for this coefficient/);
+  } finally { await rm(directory, { recursive: true, force: true }); }
+}
+console.log("Simulation planning and export contracts OK");
 
 const metadata = JSON.parse(metadataText);
 for (const asset of dom.window.document.querySelectorAll('script[src], link[rel="stylesheet"]')) {

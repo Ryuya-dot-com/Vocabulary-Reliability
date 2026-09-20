@@ -35,7 +35,7 @@
         <h2 id="planning-entry-title" tabindex="-1">More learners.<br>More words.<br><em>What makes a difference?</em></h2>
         <p>Start with an example, change the study size, and see which expansion reduces variation in the average effect.</p>
         <div class="entry-actions"><button id="resume-effect-planning" class="button button-primary" type="button" hidden>Resume your comparison <span aria-hidden="true">→</span></button><button id="start-effect-planning" class="button button-primary" type="button">Explore the two-condition example <span aria-hidden="true">→</span></button></div>
-        <p id="restart-example-help" class="entry-note" hidden>Restarting loads the example design, scoring example, counts, variation and 100% increase, and clears added predictors. Kept assumption sets remain and use the reset counts. Resume keeps your current inputs.</p>
+        <p id="restart-example-help" class="entry-note" hidden>Restarting loads the example design, scoring example, counts, variation and 100% increase, and clears added predictors and simulation settings. Kept assumption sets remain and use the reset counts. Resume keeps your current inputs.</p>
         <p class="entry-note">Illustrative assumptions, not a sample-size recommendation or a power analysis.</p>
       </div>
       <ol class="journey-preview" aria-label="Your three steps">
@@ -387,6 +387,24 @@
             <p class="tool-caveat">The facet role “Fixed” means fixed context in this structural audit; it does not add a predictor or adjust for that facet. Added predictors do not change the SD assumptions in the two-facet projection: they require a separate analysis.</p>
           </details>
         </section>
+        <section class="form-section">
+          <details id="simulation-options" class="assumption-help">
+            <summary>Plan an offline power simulation in R</summary>
+            <p>Generate and refit binary responses for two counterbalanced conditions, with crossed learners and words. This downloads an R program; no simulation runs in your browser. These counts are independent of the curve and scoring examples. Conditions use −0.5/+0.5 coding; effect inputs are logit coefficients, not percentages. Start with a short run to check execution, then increase replications for Monte Carlo precision.</p>
+            <div class="field-grid"><label class="field" for="sim-n"><span>Learners (even count)</span><input id="sim-n" type="number" value="60" step="2" min="4" max="5000"></label><label class="field" for="sim-k"><span>Target words per condition</span><input id="sim-k" type="number" value="15" step="1" min="2" max="500"></label><label class="field" for="sim-reps"><span>Replications</span><input id="sim-reps" type="number" value="200" step="1" min="2" max="10000"></label><label class="field" for="sim-seed"><span>Random seed</span><input id="sim-seed" type="number" value="4101" step="1" min="1" max="2147473647"></label><label class="field" for="sim-intercept"><span>Baseline logit (at zero/reference predictors)</span><input id="sim-intercept" type="number" value="0" step="any"></label><label class="field" for="sim-effect"><span>Condition coefficient (logit)</span><input id="sim-effect" type="number" value="0.4" step="any"></label><label class="field" for="sim-alpha"><span>Two-sided significance level</span><input id="sim-alpha" type="number" value="0.05" step="any" min="0.001" max="0.999"></label></div>
+            <p id="sim-precision" class="tool-caveat"></p>
+            <details class="assumption-help"><summary>Random-effect distributions</summary><p>Zero-mean normal random effects. Only terms in the selected model are generated; SD controls for absent slopes are inactive. Added slope SDs apply to each added numeric or categorical-contrast coefficient, including its requested interaction. For diag/none use zero correlation; us allows one common generating correlation while the fitted model estimates a full covariance matrix.</p><div class="field-grid"><label class="field" for="sim-person_intercept_sd"><span>Learner intercept SD</span><input id="sim-person_intercept_sd" type="number" value="0.7" step="any" min="0"></label><label class="field" for="sim-person_condition_sd"><span>Learner condition slope SD</span><input id="sim-person_condition_sd" type="number" value="0.35" step="any" min="0"></label><label class="field" for="sim-person_additional_sd"><span>Learner each added slope SD</span><input id="sim-person_additional_sd" type="number" value="0.15" step="any" min="0"></label><label class="field" for="sim-person_rho"><span>Learner common correlation</span><input id="sim-person_rho" type="number" value="0" step="any" min="-1" max="1"></label><label class="field" for="sim-word_intercept_sd"><span>Word intercept SD</span><input id="sim-word_intercept_sd" type="number" value="0.5" step="any" min="0"></label><label class="field" for="sim-word_condition_sd"><span>Word condition slope SD</span><input id="sim-word_condition_sd" type="number" value="0.18" step="any" min="0"></label><label class="field" for="sim-word_additional_sd"><span>Word each added slope SD</span><input id="sim-word_additional_sd" type="number" value="0.1" step="any" min="0"></label><label class="field" for="sim-word_rho"><span>Word common correlation</span><input id="sim-word_rho" type="number" value="0" step="any" min="-1" max="1"></label></div></details>
+            <details class="assumption-help"><summary>Known targets and feedback-only fillers</summary>
+              <p>Known target status is sampled independently of ability, difficulty and condition. To generate known targets, select initially unknown targets in the score definition; they are excluded from the fitted model. This simple screening assumption does not model informative selection. Fillers enter feedback scores only; their effect on motivation, fatigue or exposure is not modeled.</p><div class="field-grid"><label class="field" for="sim-known_rate"><span>Independent pretest-known target probability</span><input id="sim-known_rate" type="number" value="0" step="any" min="0" max="1"></label><label class="field" for="sim-known_accuracy"><span>Posttest accuracy for known targets</span><input id="sim-known_accuracy" type="number" value="1" step="any" min="0" max="1"></label><label class="field" for="sim-fillers"><span>Extra fillers per learner</span><input id="sim-fillers" type="number" value="10" step="1" min="0" max="1000"></label><label class="field" for="sim-filler_accuracy"><span>Filler accuracy</span><input id="sim-filler_accuracy" type="number" value="1" step="any" min="0" max="1"></label></div></details>
+            <div id="simulation-predictors" class="predictor-rows"></div>
+            <p class="tool-caveat">Added numeric predictors are independent normal draws; categories are equiprobable with level 1 as reference. Their within-facet declarations determine learner-, word- or response-level sampling. This is not a repeated-time design or a correlated-covariate generator. Values below are separate from the curve's memory-adjustment assumption.</p>
+            <label class="field" for="sim-test-term"><span>Coefficient to test</span><select id="sim-test-term"></select><small>The condition main coefficient is evaluated at numeric predictors = 0 and categorical reference levels. It is not a marginal average when interactions are present.</small></label>
+            <p id="simulation-status" role="status"></p><ul id="simulation-errors" class="projection-notes"></ul>
+            <button id="download-simulation-r" type="button" class="button button-primary" disabled>Download power simulation in R</button>
+            <details class="payload-panel"><summary>Preview the simulation program</summary><pre id="simulation-r-code" class="payload-box"></pre></details>
+            <p class="tool-caveat">Run the tested coefficient at zero as well to examine Type I error. Results retain every failed, nonconverged and singular fit, report conditional rejection rates with Monte Carlo uncertainty and show bounds for missing results. Successful execution is not statistical validation.</p>
+          </details>
+        </section>
         <div class="form-actions">
           <button id="evaluate-design" class="button button-primary" type="button">Evaluate structure</button>
           <button id="reset-template" class="button button-quiet" type="button">Reset example</button>
@@ -465,7 +483,8 @@
   <script src="./claim_math.js?v=0cd28a01db5b"></script>
   <script src="./audit_data.js?v=bb53d91c214f"></script>
   <script src="./claim_data.js?v=aefe802388f1"></script>
-  <script src="./study_plan.js?v=6a63b1b7d638"></script>
-  <script src="./app.js?v=e27ceeea110b"></script>
+  <script src="./simulation_data.js?v=fd9e26ba2768"></script>
+  <script src="./study_plan.js?v=429287a13b60"></script>
+  <script src="./app.js?v=37eec082d679"></script>
 </body>
 </html>
