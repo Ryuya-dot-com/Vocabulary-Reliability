@@ -8,8 +8,8 @@
   "golden_fixtures_schema_version": "1.0.0",
   "validation_registry_version": "2026-08-30.1",
   "sha256": {
-    "index.html": "a8f3fb8a977623a78d2f5f70d364e4fc0c65041f3f992881a014d630ca4957c3",
-    "styles.css": "647d1daa7353e40e64b7ac83bc1bd17d674e65e3886f2307234c37ac43f984cb",
+    "index.html": "66881c6fc537d5cb7ff67da2b54c830e3abc6883c199c6fadef80e459731ade7",
+    "styles.css": "0c641da5c1cf67103a817920fb06c3c14b4a86d67e5c699e502a0b0f41016988",
     "app.js": "37eec082d679d2b2ea6b31239aa96af9df6f7d064d05e1ab7b030956688397e1",
     "study_plan.js": "429287a13b608147cbbce7fd74efd250f7f0b1bf2709a2fe5d1aa4155bc99683",
     "simulation_data.js": "0dbb83e76849707de78cf93581fa0039ce239a749eb2be0b5ebc09e9e694f15f",

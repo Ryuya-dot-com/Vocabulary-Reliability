@@ -669,6 +669,11 @@ h1 {
   gap: 0.4rem;
 }
 
+/* Share label, control and help rows across paired fields, including empty help. */
+.field-grid > .field, .count-fields > .field { grid-row: span 3; grid-template-rows: subgrid; }
+.field-grid > .check-field { grid-row: span 3; align-self: center; }
+.predictor-card > .button { grid-column: 1 / -1; justify-self: start; }
+
 .field-wide {
   grid-column: 1 / -1;
 }
@@ -1303,8 +1308,6 @@ body[data-mode="guided"] #route-gate { margin: 1.5rem 1.5rem 0; }
 .planning-context { color: var(--muted); max-width: 52rem; font-size: .94rem; }
 .setup-grid { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 2rem; margin: 1.8rem 0; }
 .count-fields { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.2rem; margin: 0; }
-/* Share label, input and help rows so wrapping never offsets paired controls. */
-.count-fields > .field { grid-row: span 3; grid-template-rows: subgrid; }
 .count-fields input { font-size: 1.9rem; font-weight: 650; min-height: 4rem; font-variant-numeric: tabular-nums; }
 .count-summary { color: var(--forest-deep); font-size: .85rem; margin: .8rem 0 0; }
 .explanation-note { padding: 1.2rem 1.4rem; background: #f4f6fd; border-left: 3px solid #c3cdf7; }
