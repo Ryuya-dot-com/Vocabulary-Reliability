@@ -177,6 +177,7 @@ dom.window.eval(coreJs);
 dom.window.eval(claimMathJs);
 dom.window.eval(dataJs);
 dom.window.eval(claimDataJs);
+dom.window.eval(await readText("study_plan.js"));
 dom.window.eval(appJs);
 
 const domById = id => dom.window.document.getElementById(id);
@@ -670,6 +671,134 @@ domById("add-facet").click();
 assert.equal(dom.window.document.querySelectorAll("#facet-rows tr").length, initialFacetCount + 1);
 dom.window.document.querySelector("#facet-rows tr:last-child .remove-facet").click();
 assert.equal(dom.window.document.querySelectorAll("#facet-rows tr").length, initialFacetCount);
+
+// Scoring and extended model specifications share the public UI/export path.
+domById("start-effect-planning").click();
+const studyPlan = dom.window.StudyPlan;
+const noConditionSlope = structuredClone(fixtures.find(f => f.id === "two_facet_counterbalanced").design);
+noConditionSlope.facets.find(f => f.id === "participant").slope = "none";
+const timePlan = studyPlan.modelPlan(noConditionSlope, { can_compute: true }, [{ name: "time", type: "numeric", levels: 2, interaction: false, within: ["participant"], slopes: ["participant"] }]);
+assert.match(timePlan.formula, /diag\(1 \+ time \| participant\)/, "a time slope does not require a condition slope");
+const fixedContextOnly = structuredClone(noConditionSlope);
+for (const facet of fixedContextOnly.facets) facet.model_role = "fixed";
+assert.equal(studyPlan.modelPlan(fixedContextOnly, { can_compute: true }, []).formula, null);
+const scoreBase = { target: 30, correct: 15, fillers: 10, filler_correct: 10, known: 0, known_correct: 0, policy: "all_targets" };
+assert.deepEqual(Array.from(studyPlan.scoreComparison(scoreBase), r => r.proportion), [.5, .5, .625]);
+assert.equal(studyPlan.scoreComparison({ ...scoreBase, known: 30, known_correct: 15 })[1].proportion, null);
+assert.throws(() => studyPlan.scoreComparison({ ...scoreBase, known: 29, known_correct: 0 }), /overlap/);
+assert.throws(() => studyPlan.scoreComparison({ ...scoreBase, fillers: NaN }), /whole counts/);
+assert.throws(() => studyPlan.scoreComparison({ ...scoreBase, correct: 31 }), /overlap/);
+const setStudyField = async (id, value) => {
+  domById(id).value = value;
+  domById(id).dispatchEvent(new dom.window.Event("input", { bubbles: true }));
+  await new Promise(resolve => setTimeout(resolve, 150));
+};
+const studyPayload = () => JSON.parse(domById("payload-output").textContent);
+const studySd = studyPayload().inferential_route.calculation.result.sampling_sd;
+await setStudyField("score-fillers", "20");
+assert.equal(studyPayload().inferential_route.calculation.result.sampling_sd, studySd, "fillers cannot inflate target precision");
+assert.equal(studyPayload().score_plan.results[2].proportion, .5);
+await setStudyField("score-policy", "unknown_only");
+assert.equal(studyPayload().inferential_route.gate.status, "blocked");
+assert.equal(domById("download-effect-r").disabled, true);
+await setStudyField("score-known", "30"); // inconsistent until known correct count is supplied
+assert.equal(domById("download-score-r").disabled, true);
+await setStudyField("score-known-correct", "15");
+assert.match(domById("score-rows").textContent, /Undefined/);
+assert.equal(domById("download-score-r").disabled, false);
+const zeroEligibleR = studyPlan.scoreR(studyPayload().score_plan.inputs);
+const alphaRadioForStudy = [...domById("claim-options").querySelectorAll("input")][0];
+alphaRadioForStudy.checked = true;
+alphaRadioForStudy.dispatchEvent(new dom.window.Event("change", { bubbles: true }));
+assert.equal(studyPayload().inferential_route.calculation.status, "blocked_by_score_definition");
+assert.equal(domById("alpha-value").textContent, "Unavailable");
+await setStudyField("score-target", "");
+assert.equal(domById("download-score-r").disabled, true);
+assert.equal(domById("download-model-r").disabled, true);
+domById("start-effect-planning").click();
+domById("add-predictor").click();
+let predictorRow = domById("predictor-rows").firstElementChild;
+const predictorField = key => predictorRow.querySelector(`[data-predictor="${key}"]`);
+await setStudyField(predictorField("name").id, "ability");
+await setStudyField(predictorField("within").id, "item");
+await setStudyField(predictorField("slopes").id, "item");
+predictorField("interaction").checked = true;
+predictorField("interaction").dispatchEvent(new dom.window.Event("input", { bubbles: true }));
+await new Promise(resolve => setTimeout(resolve, 150));
+assert.match(studyPayload().model_plan.formula, /outcome ~ condition_c \+ ability \+ condition_c:ability/);
+assert.match(studyPayload().model_plan.formula, /1 \+ condition_c \+ ability \+ condition_c:ability \| item/);
+assert.equal(studyPayload().model_plan.coefficient_count, 4);
+assert.equal(studyPayload().inferential_route.gate.status, "blocked");
+assert.equal(domById("download-model-r").disabled, false);
+const numericModelR = domById("model-r-code").textContent;
+await setStudyField("score-policy", "unknown_only");
+const unknownModelR = domById("model-r-code").textContent;
+domById("download-model-r").click();
+assert.equal(downloadedName, "vocabulary-analysis-specification.R");
+assert.equal(await downloadedBlob.text(), unknownModelR);
+await setStudyField(predictorField("slopes").id, "participant");
+assert.equal(domById("download-model-r").disabled, true);
+assert.match(domById("model-errors").textContent, /requires variation/);
+await setStudyField(predictorField("slopes").id, "unknown_facet");
+assert.match(domById("model-errors").textContent, /unknown facet/);
+await setStudyField(predictorField("slopes").id, "item");
+await setStudyField(predictorField("name").id, "x);system('oops')");
+assert.equal(domById("download-model-r").disabled, true);
+await setStudyField(predictorField("name").id, "ability");
+await setStudyField(predictorField("type").id, "factor");
+predictorField("type").dispatchEvent(new dom.window.Event("change", { bubbles: true }));
+assert.equal(predictorField("levels").disabled, false);
+await setStudyField(predictorField("levels").id, "3");
+assert.equal(studyPayload().model_plan.coefficient_count, 6);
+assert.match(studyPayload().model_plan.formula, /factor\(ability\)/);
+const factorModelR = domById("model-r-code").textContent;
+domById("add-predictor").click();
+const secondName = domById("predictor-rows").lastElementChild.querySelector('[data-predictor="name"]');
+await setStudyField(secondName.id, "ability");
+assert.match(domById("model-errors").textContent, /unique R variable/);
+assert.equal(domById("download-model-r").disabled, true);
+domById("start-effect-planning").click();
+assert.equal(domById("predictor-rows").children.length, 0);
+assert.equal(studyPayload().inferential_route.calculation.status, "computed_sensitivity");
+assert.equal(domById("score-policy").value, "all_targets");
+
+if (process.argv.includes("--check-r")) {
+  const directory = await mkdtemp(path.join(tmpdir(), "study-plan-r-"));
+  try {
+    await writeFile(path.join(directory, "numeric.R"), numericModelR);
+    await writeFile(path.join(directory, "unknown.R"), unknownModelR);
+    await writeFile(path.join(directory, "factor.R"), factorModelR);
+    await writeFile(path.join(directory, "zero.R"), zeroEligibleR);
+    await writeFile(path.join(directory, "check.R"), `
+source("zero.R")
+stopifnot(is.na(scores$proportion[2]))
+source("numeric.R")
+stopifnot(identical(scores$proportion, c(.5, .5, .625)))
+set.seed(410)
+d <- expand.grid(participant = factor(seq_len(40)), item = factor(seq_len(12)), time = 1:2)
+d$condition_c <- ifelse((as.integer(d$participant) + as.integer(d$item)) %% 2 == 0, -.5, .5)
+d$ability <- rnorm(40)[as.integer(d$participant)]
+d$item_role <- ifelse(as.integer(d$item) <= 10, "target", "filler")
+d$pretest_known <- as.integer(d$participant) %% 3 == 0 & as.integer(d$item) %% 3 == 0
+d$outcome <- rbinom(nrow(d), 1, plogis(-.2 + .3 * d$condition_c + .2 * d$ability))
+fit <- suppressWarnings(fit_study(d))
+stopifnot(nobs(fit) == sum(d$item_role == "target"), nrow(lme4::getME(fit, "X")) == 800)
+bad <- d; bad$condition_c <- 0
+stopifnot(inherits(try(fit_study(bad), silent = TRUE), "try-error"))
+source("unknown.R")
+fit <- suppressWarnings(fit_study(d))
+stopifnot(nobs(fit) == sum(d$item_role == "target" & !d$pretest_known))
+source("factor.R")
+d$ability <- factor((as.integer(d$participant) %% 3) + 1)
+fit <- suppressWarnings(fit_study(d))
+stopifnot(ncol(lme4::getME(fit, "X")) == 6)
+cat("Score/R parity, filtering, numeric and factor GLMM specifications OK\\n")
+`);
+    const output = execFileSync("Rscript", ["--vanilla", "check.R"], { cwd: directory, timeout: 60000, encoding: "utf8", stdio: "pipe" });
+    assert.match(output, /specifications OK/);
+  } finally { await rm(directory, { recursive: true, force: true }); }
+}
+console.log("Study planning: score definitions, zero eligibility, model slopes, gates and R exports OK");
 
 const metadata = JSON.parse(metadataText);
 for (const asset of dom.window.document.querySelectorAll('script[src], link[rel="stylesheet"]')) {

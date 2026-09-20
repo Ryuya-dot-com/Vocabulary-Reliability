@@ -56,7 +56,7 @@ virtualConsole.on("jsdomError", error => errors.push(error.message));
 const dom = new JSDOM(await readFile(path.join(root, "public/index.html"), "utf8"), {
   url: "http://localhost/", runScripts: "outside-only", pretendToBeVisual: true, virtualConsole
 });
-for (const file of ["design_audit.js", "claim_math.js", "audit_data.js", "claim_data.js", "app.js"]) {
+for (const file of ["design_audit.js", "claim_math.js", "audit_data.js", "claim_data.js", "study_plan.js", "app.js"]) {
   dom.window.eval(await readFile(path.join(root, "public", file), "utf8"));
 }
 const doc = dom.window.document;

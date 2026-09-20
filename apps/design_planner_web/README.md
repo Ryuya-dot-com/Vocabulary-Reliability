@@ -48,6 +48,49 @@ therefore remains `Estimable but fragile` until a complete parameter envelope
 has passed the required simulation review. A user-entered `validation_id`
 cannot promote a design on its own.
 
+## Score definitions and model specification
+
+Two optional disclosures extend the guided example without adding required setup:
+
+- **Define target scores and known-word fillers** compares a single learner's
+  fixed-target, initially-unknown-target, and whole-test scores. It records the
+  overlap of pretest-known and posttest-correct target responses; zero eligible
+  targets is undefined, not zero. Fillers never inflate the projection's word
+  count. Counts here are an independent illustration, not empirical reliability
+  estimates or evidence of motivation benefits. Unknown-only scoring disables
+  the balanced fixed-target projection and the common-item alpha identity. Both the JSON and R exports retain the
+  primary scoring policy. The score download reproduces the arithmetic in base R.
+- **Add fixed predictors and their random slopes**, inside the structural audit,
+  accepts numeric/categorical predictors, categorical level counts, condition
+  interactions, within-facet variation declarations and requested slope facets.
+  Requested interaction slopes require both declared variations. Added slopes
+  inherit diag/us structure; with no condition slope they use diag. A predictor
+  slope does not require a condition slope. The nominal fixed coefficient count
+  includes the intercept and is not a full-rank guarantee. A facet's Fixed role
+  remains fixed context, not an estimated covariate adjustment.
+
+Extra predictors disable the existing SD curve, rather than silently reusing
+its simpler formula. The structural result is explicitly for the base condition
+structure. The separate model specification validates names and slope declarations,
+not data support or statistical performance. Resetting a design example clears
+added predictors; restarting the guided example also resets the scoring example.
+
+**Download analysis specification in R** provides the current formula and
+`fit_study(data)`. It runs the scoring illustration but does not fit automatically.
+The function requires binary response data, explicit target/filler item roles,
+matching predictor/grouping columns, and lme4 supporting the displayed covariance
+syntax (tested with 2.0.6). It excludes fillers, applies the chosen pretest-known
+policy, checks missing data and fixed-effect rank, and reports singular fits.
+This is an analysis template, not a Monte Carlo power simulator. Interactions
+among added predictors, arbitrary formulas, and covariance-parameter planning
+are not provided by this editor. Any precision/power study still needs an explicit
+data-generating model and design-specific simulation.
+
+Run `node test.mjs --check-r` to check score parity and actual numeric/categorical
+GLMM fits, including target/filler and pretest-known filtering. Ordinary `npm test`
+covers invalid counts, empty eligibility, invalid slope declarations, duplicate
+and unsafe names, numerical gating, downloads and example reset.
+
 ## Learners-or-words planning workflow
 
 Choose **Explore the two-condition example** to load a counterbalanced

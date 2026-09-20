@@ -1432,3 +1432,16 @@ body[data-mode="guided"] .reporting-starter { margin: 0 clamp(1.25rem, 3.5vw, 2.
   .count-fields { grid-template-columns: minmax(0, 1fr); }
   .curve-readout strong { font-size: 1rem; }
 }
+
+/* Optional specification tools retain native disclosure and focus behavior. */
+.study-options { background: var(--surface, #fff); border: 1px solid var(--border, #dce0e9); border-radius: 1rem; padding: 0 1.25rem; }
+.study-options .form-section { border: 0; padding: .5rem 0 1.5rem; }
+.predictor-rows { display: grid; gap: 1rem; margin: 1rem 0; }
+.predictor-card { min-width: 0; border: 1px solid var(--border, #dce0e9); border-radius: .75rem; padding: 1rem; }
+.predictor-card legend { font-weight: 600; padding: 0 .4rem; }
+.predictor-card .field, .study-options .field { min-width: 0; }
+#model-errors { overflow-wrap: anywhere; }
+#model-options > summary, #score-details > summary { scroll-margin-top: 1.25rem; }
+
+.planning-links { display: grid; gap: .6rem; margin-top: .8rem; }
+.planning-links a { display: block; width: fit-content; }

@@ -3,12 +3,13 @@
 
   const core = window.DesignAudit;
   const claimMath = window.ClaimMath;
+  const studyPlan = window.StudyPlan;
   const fixturePayload = window.DesignAuditFixtures;
   const registry = window.DesignAuditRegistry;
   const targetRegistry = window.InferentialTargetRegistry;
   const referenceGridRegistry = window.ReferenceGridRegistry;
   const decisionRules = window.DecisionRulesRegistry;
-  if (!core || !claimMath || !fixturePayload || !registry || !targetRegistry ||
+  if (!core || !claimMath || !studyPlan || !fixturePayload || !registry || !targetRegistry ||
       !referenceGridRegistry || !decisionRules) {
     throw new Error("Design-audit or claim-routing assets failed to load.");
   }
@@ -170,6 +171,9 @@
   let currentBranchId = targetRegistry.branches[0].id;
   let currentAudit = null;
   let currentRoute = null;
+  let currentModel = null;
+  let currentScore = null;
+  let predictorSequence = 0;
   let evaluationTimer = null;
   let plannerStep = 0;
   let curvePoints = [];
@@ -220,6 +224,7 @@
     byId("planning-entry").hidden = mode !== "overview";
     byId("claim-router").hidden = mode === "overview";
     byId("design-details").hidden = mode === "overview";
+    byId("score-details").hidden = mode === "overview";
     byId("show-overview").hidden = mode === "overview";
     byId("claim-router").setAttribute("aria-label", mode === "guided" ? "Study size comparison" : "Research tools");
     byId("claim-router").removeAttribute("aria-labelledby");
@@ -267,6 +272,8 @@
   function syncPayload() {
     if (!currentAudit) return;
     currentAudit.inferential_route = currentRoute;
+    currentAudit.model_plan = currentModel;
+    currentAudit.score_plan = currentScore;
     elements.payload.textContent = JSON.stringify(currentAudit, null, 2);
   }
 
@@ -330,6 +337,12 @@
   function effectProjectionGate() {
     const base = conditionAuditGate();
     if (base.status === "blocked") return base;
+    if (currentModel?.status === "blocked" || currentModel?.predictors.length) {
+      return { status: "blocked", title: "Additional model specification needs offline analysis", message: "Resolve any model-input errors, then download the analysis specification below. Extra fixed effects and their slopes are outside this two-facet projection; specify distributions and covariances in a design-specific simulation to evaluate precision or power." };
+    }
+    if (currentScore?.error || currentScore?.inputs.policy === "unknown_only") {
+      return { status: "blocked", title: "Review the target-score definition", message: currentScore.error || "Excluding pretest-known responses changes the eligible item sets. The balanced fixed-target projection does not cover this policy. Download the analysis specification and examine eligibility by learner and condition." };
+    }
     const design = currentAudit.design;
     const facetById = new Map(design.facets.map(facet => [facet.id.toLowerCase(), facet]));
     const participant = facetById.get("participant");
@@ -624,7 +637,9 @@
       "# A zero projected SD does not imply perfect precision.",
       "# Next: repeat with plausible slope SDs, then consider cost, exposure and fatigue.",
       "",
-      ...assumptionRCode()
+      ...assumptionRCode(),
+      "# Separate scoring illustration; these counts do not change the projection above.",
+      studyPlan.scoreR(currentScore.inputs)
     ].join("\n");
   }
 
@@ -950,6 +965,7 @@
   }
 
   function renderClaimRoute() {
+    renderScorePlan();
     const branch = branchById.get(currentBranchId) || targetRegistry.branches[0];
     elements.routeBranch.textContent = `Branch ${branch.number}`;
     elements.routeQuestion.textContent = branch.question;
@@ -972,7 +988,12 @@
         title: "Available without the design audit",
         message: "The closed-form identity can be evaluated locally after the exact score unit is defined; it predicts neither observed alpha nor construct validity."
       };
-      calculation = renderAlphaProjection();
+      if (currentScore.inputs.policy === "unknown_only") {
+        gate = { status: "blocked", title: "Unequal eligible item sets need a separate reliability analysis", message: "Unknown-only filtering can change the item set for each learner. This common-item alpha identity cannot establish reliability for those scores." };
+        elements.alphaValue.textContent = "Unavailable";
+        replaceList(elements.alphaNotes, [gate.message]);
+        calculation = { status: "blocked_by_score_definition" };
+      } else calculation = renderAlphaProjection();
     } else if (branch.tool === "effect_projection") {
       gate = effectProjectionGate();
       calculation = renderEffectProjection(gate);
@@ -1149,6 +1170,7 @@
     elements.observation.value = design.units.observation;
     elements.analysis.value = design.units.analysis;
     renderFacetRows(design.facets);
+    byId("predictor-rows").replaceChildren();
     evaluateDesign();
   }
 
@@ -1209,9 +1231,7 @@
         : "No structural reason codes were raised. The validation registry is empty, so numerical certification remains unavailable.";
       elements.issueList.append(empty);
     }
-    elements.formula.textContent = result.can_compute && result.formula_suggestion
-      ? result.formula_suggestion
-      : "Suppressed: resolve identification or model-scope issues first.";
+    renderModelPlan(design, result);
     elements.generalizes.textContent = formatFacets(
       result.claim_boundary.generalizes_over,
       "None established"
@@ -1229,6 +1249,99 @@
     };
     markInvalidFields(result);
     renderClaimRoute();
+  }
+
+  function scoreInputs() {
+    const inputs = {};
+    for (const name of ["target", "correct", "fillers", "filler_correct", "known", "known_correct"]) {
+      inputs[name] = numberFrom(byId(`score-${name.replaceAll("_", "-")}`));
+    }
+    inputs.policy = byId("score-policy").value;
+    return inputs;
+  }
+
+  function renderScorePlan() {
+    const inputs = scoreInputs();
+    currentScore = { scope: "one_learner_illustration", inputs };
+    byId("score-rows").replaceChildren();
+    byId("score-error").hidden = true;
+    byId("download-score-r").disabled = false;
+    try {
+      currentScore.results = studyPlan.scoreComparison(inputs);
+      for (const [index, value] of currentScore.results.entries()) {
+        const row = document.createElement("tr");
+        const primary = (inputs.policy === "all_targets" ? 0 : 1) === index;
+        for (const text of [value.label + (primary ? " · primary" : ""), `${value.numerator} / ${value.denominator}`, value.proportion === null ? "Undefined (no eligible words)" : `${(100 * value.proportion).toFixed(1)}%`]) {
+          const cell = document.createElement("td"); cell.textContent = text; row.append(cell);
+        }
+        byId("score-rows").append(row);
+      }
+      byId("score-interpretation").textContent = inputs.policy === "unknown_only"
+        ? "Primary score: initially unknown targets. Report eligible denominators for every learner and condition. Zero eligible words gives an undefined score; the study-size projection is unavailable for this policy."
+        : "Primary score: the fixed target set. This describes posttest performance, including any initially known targets. Fillers affect the whole-test feedback score only; they add no target words to the projection.";
+    } catch (error) {
+      currentScore.error = error.message;
+      byId("score-error").textContent = error.message;
+      byId("score-error").hidden = false;
+      byId("score-interpretation").textContent = "Correct the counts to compare scores.";
+      byId("download-score-r").disabled = true;
+    }
+    byId("download-model-r").disabled = !currentModel?.formula || Boolean(currentScore.error);
+    byId("model-r-code").textContent = byId("download-model-r").disabled ? "Resolve model, structure and scoring issues to export." : studyPlan.modelR(currentModel, currentAudit.design, inputs);
+  }
+
+  function collectPredictors() {
+    return [...byId("predictor-rows").children].map(row => {
+      const field = key => row.querySelector(`[data-predictor="${key}"]`);
+      return { name: field("name").value.trim(), type: field("type").value,
+        levels: numberFrom(field("levels")), interaction: field("interaction").checked,
+        within: [...new Set(splitIds(field("within").value))], slopes: [...new Set(splitIds(field("slopes").value))] };
+    });
+  }
+
+  function addPredictor() {
+    const row = document.createElement("fieldset");
+    row.className = "predictor-card field-grid";
+    const legend = document.createElement("legend"); legend.textContent = "Additional fixed predictor"; row.append(legend);
+    const serial = ++predictorSequence;
+    const configs = [
+      ["name", "Variable name", makeInput("text", "", "Variable name")],
+      ["type", "Variable type", makeSelect([["numeric", "Numeric"], ["factor", "Categorical"]], "numeric", "Variable type")],
+      ["levels", "Categorical levels", makeInput("number", 2, "Categorical levels")],
+      ["within", "Varies within (facet IDs)", makeInput("text", "", "Varies within (facet IDs)")],
+      ["slopes", "Random slopes within (facet IDs)", makeInput("text", "", "Random slopes within (facet IDs)")],
+      ["interaction", "Include condition interaction", makeInput("checkbox", "", "Include condition interaction")]
+    ];
+    for (const [name, title, input] of configs) {
+      const label = document.createElement("label"); label.className = name === "interaction" ? "check-field" : "field";
+      input.id = `predictor-${serial}-${name}`; input.dataset.predictor = name;
+      label.htmlFor = input.id;
+      const span = document.createElement("span"); span.textContent = title;
+      if (name === "interaction") label.append(input, span); else label.append(span, input);
+      if (name === "name") input.placeholder = "e.g. vocabulary, frequency, time";
+      if (["within", "slopes"].includes(name)) input.placeholder = "e.g. participant, item";
+      if (name === "levels") { input.min = 2; input.max = 100; input.step = 1; input.disabled = true; }
+      row.append(label);
+    }
+    const remove = document.createElement("button"); remove.type = "button"; remove.className = "button button-quiet";
+    remove.textContent = "Remove predictor";
+    remove.addEventListener("click", () => { row.remove(); evaluateDesign(); byId("add-predictor").focus({ preventScroll: true }); });
+    row.append(remove);
+    row.querySelector('[data-predictor="type"]').addEventListener("change", event => {
+      row.querySelector('[data-predictor="levels"]').disabled = event.target.value !== "factor";
+    });
+    byId("predictor-rows").append(row);
+    byId("model-options").open = true;
+    evaluateDesign();
+    row.querySelector("input").focus({ preventScroll: true });
+  }
+
+  function renderModelPlan(design, result) {
+    currentModel = studyPlan.modelPlan(design, result, collectPredictors());
+    elements.formula.textContent = currentModel.formula || "Suppressed: resolve structural and model-input issues first.";
+    byId("model-summary").textContent = `${currentModel.predictors.length} added fixed predictors; ${Number.isFinite(currentModel.coefficient_count) ? currentModel.coefficient_count : "—"} nominal fixed coefficients including intercept. ${currentModel.predictors.length ? "Additional terms require offline analysis; the study-size curve is unavailable." : "The base two-facet projection remains subject to its design and scoring gates."}`;
+    replaceList(byId("model-errors"), currentModel.errors);
+    byId("model-facet-help").textContent = `Declared facet IDs: ${design.facets.map(f => f.id).join(", ")}. For example, a learner-level vocabulary measure can vary within item but not within participant; a word-level frequency can vary within participant but not within item.`;
   }
 
   function evaluateDesign() {
@@ -1298,6 +1411,18 @@
   elements.registryVersion.textContent = registry.registry_version;
   elements.registryCount.textContent = `${validatedIds.length} validated envelope${validatedIds.length === 1 ? "" : "s"}`;
 
+  byId("add-predictor").addEventListener("click", addPredictor);
+  for (const event of ["input", "change"]) byId("score-inputs").addEventListener(event, renderClaimRoute);
+  byId("download-score-r").addEventListener("click", () => {
+    renderScorePlan();
+    if (!currentScore.error) downloadText(studyPlan.scoreR(currentScore.inputs), "vocabulary-score-definition.R", "text/plain");
+  });
+  byId("download-model-r").addEventListener("click", () => {
+    window.clearTimeout(evaluationTimer);
+    evaluateDesign();
+    if (currentModel.formula && !currentScore.error) downloadText(studyPlan.modelR(currentModel, currentAudit.design, currentScore.inputs), "vocabulary-analysis-specification.R", "text/plain");
+  });
+  byId("review-score-plan").addEventListener("click", () => { byId("score-details").open = true; });
   elements.template.addEventListener("change", () => loadFixture(elements.template.value));
   byId("start-effect-planning").addEventListener("click", () => {
     byId("resume-effect-planning").hidden = false;
@@ -1313,6 +1438,8 @@
     for (const [field, value] of [[elements.effectN, 120], [elements.effectK, 15],
       [elements.effectPersonSd, .35], [elements.effectItemSd, .18], [elements.effectMemory, .2]]) field.value = value;
     elements.effectMemoryAdjusted.checked = false;
+    byId("score-policy").value = "all_targets";
+    for (const [id, value] of [["target", 30], ["correct", 15], ["fillers", 10], ["filler-correct", 10], ["known", 0], ["known-correct", 0]]) byId(`score-${id}`).value = value;
     loadFixture("two_facet_counterbalanced");
     byId("design-details").open = false;
     setPlannerStep(0, true);
@@ -1417,6 +1544,7 @@
       slope: "diag"
     });
     renderFacetRows(design.facets);
+    byId("predictor-rows").replaceChildren();
     evaluateDesign();
   });
   elements.facetRows.addEventListener("click", event => {
@@ -1425,6 +1553,7 @@
     const design = collectDesign();
     design.facets.splice(Number(removeButton.dataset.removeIndex), 1);
     renderFacetRows(design.facets);
+    byId("predictor-rows").replaceChildren();
     evaluateDesign();
   });
   elements.form.addEventListener("input", scheduleEvaluation);

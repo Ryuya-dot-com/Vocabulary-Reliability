@@ -76,6 +76,7 @@ const artifactNames = [
   "index.html",
   "styles.css",
   "app.js",
+  "study_plan.js",
   "design_audit.js",
   "claim_math.js",
   "design_audit.schema.json",

@@ -8,9 +8,10 @@
   "golden_fixtures_schema_version": "1.0.0",
   "validation_registry_version": "2026-08-30.1",
   "sha256": {
-    "index.html": "28f2448c45d62d4287b962636aaa0c540472f67bcf5a38eb509bc697bb087d25",
-    "styles.css": "e93e54a508a90c3aa5f99e598dcd07554cdcac655d2408ab2be8b15696cd6509",
-    "app.js": "b6ae673271d0b3546829abe9bbd76bbaf3f463c43e11ed3147429f2b630e9981",
+    "index.html": "50da32781a5bbbbef9c8489a17e35020a4b0881b7bc2bb8bcfd5085c38d40c26",
+    "styles.css": "ac8adc0e72a131ca4d1e412130137c15bc77419c3f26d0d2b7eb6bf3d1711f69",
+    "app.js": "e27ceeea110b46e0d1ae95b6f015c511fcd1a1c164dd8310afe61fc50ececca2",
+    "study_plan.js": "6a63b1b7d6388d39f821527e97c3dc239ad7e0b6e7c89a3dd76626d0047bfc0c",
     "design_audit.js": "ab6c932ff10dc6a3b9ee46570b636713f67b5d84491fc0ef95fa302e700a6bf9",
     "claim_math.js": "0cd28a01db5b04b3c3c6c83a417977ec2334e4823f8b63d629b3f8197ef92233",
     "design_audit.schema.json": "0100e10894ba075e6f2c42a49ba22139e82c17903f7c7730bb2d521d222306b0",

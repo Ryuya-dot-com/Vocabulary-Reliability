@@ -7,7 +7,7 @@
   <meta name="robots" content="noindex, nofollow, noarchive">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
   <title>Vocabulary Design Planner</title>
-  <link rel="stylesheet" href="./styles.css?v=e93e54a508a9">
+  <link rel="stylesheet" href="./styles.css?v=ac8adc0e72a1">
 </head>
 <body data-mode="overview">
   <a class="skip-link" href="#planning-entry-title">Skip to planner</a>
@@ -35,7 +35,7 @@
         <h2 id="planning-entry-title" tabindex="-1">More learners.<br>More words.<br><em>What makes a difference?</em></h2>
         <p>Start with an example, change the study size, and see which expansion reduces variation in the average effect.</p>
         <div class="entry-actions"><button id="resume-effect-planning" class="button button-primary" type="button" hidden>Resume your comparison <span aria-hidden="true">→</span></button><button id="start-effect-planning" class="button button-primary" type="button">Explore the two-condition example <span aria-hidden="true">→</span></button></div>
-        <p id="restart-example-help" class="entry-note" hidden>Restarting loads the example design, counts, variation and 100% increase. Kept assumption sets remain and use the reset counts. Resume keeps your current inputs.</p>
+        <p id="restart-example-help" class="entry-note" hidden>Restarting loads the example design, scoring example, counts, variation and 100% increase, and clears added predictors. Kept assumption sets remain and use the reset counts. Resume keeps your current inputs.</p>
         <p class="entry-note">Illustrative assumptions, not a sample-size recommendation or a power analysis.</p>
       </div>
       <ol class="journey-preview" aria-label="Your three steps">
@@ -106,7 +106,7 @@
               <label class="check-field" for="alpha-high-load"><input id="alpha-high-load" type="checkbox"><span>Short/massed high-load design</span></label>
             </div>
             <ul id="alpha-notes" class="projection-notes"></ul>
-            <p class="tool-caveat">Prediction from typed assumptions, not an observed coefficient and never a pass/fail threshold.</p>
+            <p class="tool-caveat">Prediction from typed assumptions, not an observed coefficient and never a pass/fail threshold. These inputs are separate from the scoring illustration. Do not add constant or different-purpose fillers to k while holding the average correlation fixed.</p>
           </section>
 
           <section id="effect-tool" class="route-tool" aria-labelledby="effect-tool-title" hidden>
@@ -119,12 +119,12 @@
             <div id="plan-setup" data-plan-panel="0">
               <p class="section-label">Step 1 of 3 · Your starting point</p>
               <h4 id="effect-tool-title" tabindex="-1">What does your study look like?</h4>
-              <p class="planning-context">This example compares two conditions. Each learner sees words in both conditions; each word appears in both conditions across learners. <a id="review-effect-design" href="#design-details">Different design? Review the structure.</a></p>
+              <p class="planning-context">This example compares two conditions. Each learner sees words in both conditions; each word appears in both conditions across learners. <span class="planning-links"><a id="review-effect-design" href="#design-details">Different design? Review the structure.</a> <a href="#score-details" id="review-score-plan">Including known words? Define the scores.</a></span></p>
               <div class="setup-grid">
                 <div>
                   <div class="compact-fields count-fields">
                     <label class="field" for="effect-n"><span>Participants</span><input id="effect-n" type="number" min="1" step="1" value="120"><small>How many learners take part?</small></label>
-                    <label class="field" for="effect-k"><span>Words per condition per learner</span><input id="effect-k" type="number" min="1" step="1" value="15"><small>The total word set contains twice this number.</small></label>
+                    <label class="field" for="effect-k"><span>Target words per condition per learner</span><input id="effect-k" type="number" min="1" step="1" value="15"><small>The target set contains twice this number. Exclude motivational fillers.</small></label>
                   </div>
                   <p id="plan-count-summary" class="count-summary"></p>
                 </div>
@@ -253,6 +253,32 @@
       </div>
     </section>
 
+    <details id="score-details" class="design-details study-options" hidden>
+      <summary>Define target scores and known-word fillers</summary>
+      <div class="form-section">
+        <h2>Separate the test experience from the research score</h2>
+        <p>Keep easy words in the test when appropriate for the task. Define which responses answer the research question separately. The arithmetic below describes one learner, not motivation or reliability.</p>
+        <div id="score-inputs" class="field-grid">
+          <label class="field" for="score-target"><span>Target words</span><input id="score-target" type="number" min="1" max="1000000" step="1" value="30"></label>
+          <label class="field" for="score-correct"><span>Correct target responses at posttest</span><input id="score-correct" type="number" min="0" max="1000000" step="1" value="15"></label>
+          <label class="field" for="score-fillers"><span>Additional filler words</span><input id="score-fillers" type="number" min="0" max="1000000" step="1" value="10"></label>
+          <label class="field" for="score-filler-correct"><span>Correct filler responses</span><input id="score-filler-correct" type="number" min="0" max="1000000" step="1" value="10"><small>Being intended as an easy word does not guarantee a correct response.</small></label>
+          <label class="field field-wide" for="score-policy"><span>Primary target-score definition</span><select id="score-policy"><option value="all_targets">All target words: fixed target set</option><option value="unknown_only">Initially unknown targets: exclude pretest-known responses</option></select><small>The whole-test feedback score always includes fillers. Neither target score includes fillers.</small></label>
+          <details class="field-wide assumption-help"><summary>Some target words were already known at pretest</summary>
+            <div class="field-grid">
+              <label class="field" for="score-known"><span>Pretest-known target words</span><input id="score-known" type="number" min="0" max="1000000" step="1" value="0"></label>
+              <label class="field" for="score-known-correct"><span>Of those, correct at posttest</span><input id="score-known-correct" type="number" min="0" max="1000000" step="1" value="0"><small>Do not assume that every pretest-known response remains correct.</small></label>
+            </div>
+          </details>
+        </div>
+        <p id="score-error" class="input-error" role="alert" hidden></p>
+        <div class="comparison-table-wrap"><table class="comparison-table"><caption>One-learner scoring illustration</caption><thead><tr><th scope="col">Score definition</th><th scope="col">Correct / eligible</th><th scope="col">Percentage</th></tr></thead><tbody id="score-rows"></tbody></table></div>
+        <p id="score-interpretation" role="status"></p>
+        <p class="tool-caveat">These example counts do not change the study-size inputs. Use target words only in the projection. Unknown-only filtering can produce unequal eligible sets and is routed to a design-specific analysis. A higher feedback score does not establish better learning or higher reliability; alpha cannot be recovered from these totals.</p>
+        <button id="download-score-r" class="button button-secondary" type="button">Download scoring example in R</button>
+      </div>
+    </details>
+
     <details id="design-details" class="design-details" hidden>
       <summary>Inspect or change the design structure</summary>
     <div class="workspace-grid">
@@ -350,6 +376,17 @@
           </div>
         </section>
 
+        <section class="form-section" aria-labelledby="model-options-title">
+          <details id="model-options" class="assumption-help">
+            <summary id="model-options-title">Add fixed predictors and their random slopes</summary>
+            <p>The base fixed model contains an intercept and condition. Add variables by name and type; a categorical variable contributes one fewer coefficient than its levels. This specifies a model, not its precision or power.</p>
+            <p id="model-facet-help" class="section-help"></p>
+            <div id="predictor-rows" class="predictor-rows"></div>
+            <button id="add-predictor" type="button" class="button button-secondary">Add fixed predictor</button>
+            <p class="tool-caveat">For each predictor, declare the facet IDs within which it varies. Request a slope only within those random facets. A condition interaction also adds its interaction slope in requested facets; verify both variables vary and that the actual design supports their interaction. Added slopes use the facet’s diag/us structure, or diag when its condition slope is None.</p>
+            <p class="tool-caveat">The facet role “Fixed” means fixed context in this structural audit; it does not add a predictor or adjust for that facet. Added predictors do not change the SD assumptions in the two-facet projection: they require a separate analysis.</p>
+          </details>
+        </section>
         <div class="form-actions">
           <button id="evaluate-design" class="button button-primary" type="button">Evaluate structure</button>
           <button id="reset-template" class="button button-quiet" type="button">Reset example</button>
@@ -361,7 +398,7 @@
         <div class="result-sticky">
           <p class="section-label">Current decision</p>
           <div id="state-card" class="state-card">
-            <span id="state-kicker" class="state-kicker">Validation state</span>
+            <span id="state-kicker" class="state-kicker">Base condition structure</span>
             <h2 id="result-title" tabindex="-1">Waiting for design</h2>
             <p id="state-description">Complete the design graph to evaluate identification and scope.</p>
           </div>
@@ -375,9 +412,13 @@
           </section>
 
           <section class="result-section" aria-labelledby="formula-title">
-            <h3 id="formula-title">Formula suggestion</h3>
+            <h3 id="formula-title">Model specification</h3>
             <pre id="formula-output" class="formula-box"><code>Not available</code></pre>
-            <p class="result-caption">A syntax suggestion only. It is suppressed when the design is unidentified or outside the supported model class.</p>
+            <p id="model-summary" class="result-caption"></p>
+            <ul id="model-errors" class="projection-notes"></ul>
+            <p class="result-caption">Specification only; the structural decision above covers the base condition design. Added terms have not been checked for data support, full rank or numerical performance.</p>
+            <button id="download-model-r" type="button" class="button button-secondary">Download analysis specification in R</button>
+            <details class="payload-panel"><summary>Preview the R analysis specification</summary><pre id="model-r-code" class="payload-box"></pre></details>
           </section>
 
           <section class="result-section" aria-labelledby="claims-title">
@@ -424,6 +465,7 @@
   <script src="./claim_math.js?v=0cd28a01db5b"></script>
   <script src="./audit_data.js?v=bb53d91c214f"></script>
   <script src="./claim_data.js?v=aefe802388f1"></script>
-  <script src="./app.js?v=b6ae673271d0"></script>
+  <script src="./study_plan.js?v=6a63b1b7d638"></script>
+  <script src="./app.js?v=e27ceeea110b"></script>
 </body>
 </html>
